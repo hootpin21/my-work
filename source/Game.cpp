@@ -44,7 +44,9 @@ namespace platformer {
         Vector2i *location = player->getLocation();
         Vector2i *velocity = player->getVelocity();
 
-        if (location->getY() > 1) {
+        BlockType below = getRelativeBlock(0, 1);
+
+        if (below != SOLID) {
             velocity->addY(-1);
         }
 
@@ -61,11 +63,10 @@ namespace platformer {
         if (velocity->getY() > 0) {
             location->addY(1);
         } else if (velocity->getY() < 0) {
-            location->addY(-1);
-
-            if (location->getY() < 1) {
-                location->setY(1);
+            if (below == SOLID) {
                 velocity->setY(0);
+            } else {
+                location->addY(-1);
             }
         }
 
@@ -120,7 +121,7 @@ namespace platformer {
         switch (blockType) {
             case AIR:
                 break;
-            case BLOCK:
+            case SOLID:
                 screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
                 break;
             case COIN_ON:

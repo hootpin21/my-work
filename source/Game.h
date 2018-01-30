@@ -9,7 +9,7 @@ namespace platformer {
 
     enum BlockType : char {
         AIR = '-',
-        BLOCK = '+',
+        SOLID = '+',
         COIN_ON = '.',
         COIN_OFF = ','
     };
