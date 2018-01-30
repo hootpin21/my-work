@@ -9,10 +9,10 @@ namespace platformer {
         char map[mapY][mapX] = {
                 "---------.----------",
                 "-------------.------",
-                "--------------------",
-                "----.---+++-------+-",
-                "-----++----------++-",
-                "--.---------++----+-",
+                "------------------=-",
+                "----.---+++------==-",
+                "-----++-----------=-",
+                "--.---------++----=-",
                 "++++------------++++"
         };
 
@@ -55,24 +55,24 @@ namespace platformer {
             score++;
         }
 
-        if (below != SOLID) {
+        if (below != FOREGROUND) {
             velocity->addY(-1);
         }
 
         int accelerometerX = microBit->accelerometer.getX();
 
-        if (accelerometerX < -300 && location->getX() > 0 && left != SOLID) {
+        if (accelerometerX < -300 && location->getX() > 0 && left != FOREGROUND) {
             location->addX(-1);
         }
 
-        if (accelerometerX > 300 && location->getX() < (mapX - 2) && right != SOLID) {
+        if (accelerometerX > 300 && location->getX() < (mapX - 2) && right != FOREGROUND) {
             location->addX(1);
         }
 
         if (velocity->getY() > 0) {
             location->addY(1);
         } else if (velocity->getY() < 0) {
-            if (below == SOLID) {
+            if (below == FOREGROUND) {
                 velocity->setY(0);
             } else {
                 location->addY(-1);
@@ -130,7 +130,8 @@ namespace platformer {
         switch (blockType) {
             case AIR:
                 break;
-            case SOLID:
+            case FOREGROUND:
+            case BACKGROUND:
                 screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
                 break;
             case COIN_ON:
