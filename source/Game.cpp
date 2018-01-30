@@ -37,7 +37,10 @@ namespace platformer {
     }
 
     void Game::jump(MicroBitEvent) {
-        player->jump();
+        BlockType below = getRelativeBlock(0, 1);
+        if (below == FOREGROUND) {
+            player->jump();
+        }
     }
 
     void Game::tick() {
