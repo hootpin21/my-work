@@ -1,5 +1,5 @@
-#ifndef PLATFORMER_LOCATION_H
-#define PLATFORMER_LOCATION_H
+#ifndef PLATFORMER_VECTOR2I_H
+#define PLATFORMER_VECTOR2I_H
 
 namespace platformer {
 
@@ -31,4 +31,4 @@ namespace platformer {
 
 } // namespace platformer
 
-#endif // PLATFORMER_LOCATION_H
+#endif // PLATFORMER_VECTOR2I_H
