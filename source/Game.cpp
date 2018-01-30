@@ -9,9 +9,9 @@ namespace platformer {
         char map[mapY][mapX] = {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 1, 1, 1, 0, 0, 0, 1},
+                {0, 0, 0, 1, 1, 1, 0, 0, 1, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
@@ -44,7 +44,7 @@ namespace platformer {
         Vector2i *location = player->getLocation();
         Vector2i *velocity = player->getVelocity();
 
-        if (!player->isOnGround()) {
+        if (location->getY() > 1) {
             velocity->addY(-1);
         }
 
@@ -54,7 +54,7 @@ namespace platformer {
             location->addX(-1);
         }
 
-        if (accelerometerX > 300 && location->getX() < (mapX - HALF_SCREEN)) {
+        if (accelerometerX > 300 && location->getX() < (mapX -1)) {
             location->addX(1);
         }
 
@@ -63,8 +63,8 @@ namespace platformer {
         } else if (velocity->getY() < 0) {
             location->addY(-1);
 
-            if (location->getY() < 0) {
-                location->setY(0);
+            if (location->getY() < 1) {
+                location->setY(1);
                 velocity->setY(0);
             }
         }
@@ -84,65 +84,44 @@ namespace platformer {
 
         // Render the player.
         Vector2i *location = player->getLocation();
-        screen->setPixelValue(HALF_SCREEN, HALF_SCREEN, 255);
+        int offsetX = HALF_SCREEN;
+        int offsetY = HALF_SCREEN;
 
         if (location->getY() <= HALF_SCREEN) {
-            auto shift = (uint16_t) (HALF_SCREEN - location->getY() - 1);
-            screen->shiftDown(shift);
+            offsetY += HALF_SCREEN - location->getY();
         }
 
-        if (location->getY() > mapY) {
-            auto shift = (uint16_t) (location->getY() - mapY);
-            screen->shiftUp(shift);
+        if (location->getY() >= (mapY - HALF_SCREEN)) {
+            offsetY -= HALF_SCREEN - ((mapY - 1) - location->getY());
         }
 
-        if (location->getX() < HALF_SCREEN) {
-            auto shift = (uint16_t) (HALF_SCREEN - location->getX());
-            screen->shiftLeft(shift);
+        if (location->getX() <= HALF_SCREEN) {
+            offsetX -= HALF_SCREEN - location->getX();
         }
 
-        if (location->getX() > (mapX - SCREEN_SIZE)) {
-            auto shift = (uint16_t) (location->getX() - (mapX - SCREEN_SIZE));
-            screen->shiftRight(shift);
+        if (location->getX() >= (mapX - HALF_SCREEN)) {
+            offsetX += HALF_SCREEN - ((mapX - 1) - location->getX());
         }
+
+        screen->setPixelValue((uint16_t) offsetX, (uint16_t) offsetY, 255);
 
         // Render the map.
-        for (int x = -SCREEN_SIZE; x <= SCREEN_SIZE; x++) {
-            for (int y = -SCREEN_SIZE; y <= SCREEN_SIZE; y++) {
+        for (int x = 0; x < SCREEN_SIZE; x++) {
+            for (int y = 0; y < SCREEN_SIZE; y++) {
                 // Get the relative map coordinates for the players position.
-                int relative_x = (x) + location->getX();
-                int relative_y = (HALF_SCREEN + y) - location->getY();
+                int relativeX = (x - offsetX) + location->getX();
+                int relativeY = (y - offsetY) + ((mapY - 1) - location->getY());
 
                 // Do not render unmapped coordinates.
-                if (relative_x < 0 || relative_x >= mapX || relative_y < 0 || relative_y >= mapY) {
+                if (relativeX < 0 || relativeX >= mapX || relativeY < 0 || relativeY >= mapY) {
                     continue;
                 }
 
-                if (map[relative_y][relative_x] == 1) {
+                if (map[relativeY][relativeX] == 1) {
                     screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
                 }
             }
         }
-
-//        if (location->getY() <= HALF_SCREEN) {
-//            uint16_t shift = (uint16_t) (HALF_SCREEN - location->getY() - 1);
-//            screen->shiftDown(shift);
-//        }
-//
-//        if (location->getY() > mapY) {
-//            uint16_t shift = (uint16_t) location->getY() - (uint16_t) mapY;
-//            screen->shiftUp(shift);
-//        }
-//
-//        if (location->getX() < HALF_SCREEN) {
-//            uint16_t shift = (uint16_t) (HALF_SCREEN - location->getX());
-//            screen->shiftLeft(shift);
-//        }
-//
-//        if (location->getY() > mapX) {
-//            uint16_t shift = (uint16_t) location->getX() - (uint16_t) mapX;
-//            screen->shiftRight(shift);
-//        }
     }
 
     void Game::gameLoop() {
