@@ -3,15 +3,18 @@
 namespace platformer {
 
     namespace {
-//        int map[8][10] = {
-//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-//                {0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
-//                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-//                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-//        };
+        const int mapX = 10;
+        const int mapY = 7;
+
+        char map[mapY][mapX] = {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 1, 1, 1, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+        };
 
         // This is an incredibly gross hack to get things working. Apparently
         // the API dislikes function pointers to class members.
@@ -51,7 +54,7 @@ namespace platformer {
             location->addX(-1);
         }
 
-        if (accelerometerX > 300 && location->getX() < 4) {
+        if (accelerometerX > 300 && location->getX() < (mapX - HALF_SCREEN)) {
             location->addX(1);
         }
 
@@ -81,7 +84,65 @@ namespace platformer {
 
         // Render the player.
         Vector2i *location = player->getLocation();
-        screen->setPixelValue((int16_t) location->getX(), (int16_t) location->getY(), 255);
+        screen->setPixelValue(HALF_SCREEN, HALF_SCREEN, 255);
+
+        if (location->getY() <= HALF_SCREEN) {
+            auto shift = (uint16_t) (HALF_SCREEN - location->getY() - 1);
+            screen->shiftDown(shift);
+        }
+
+        if (location->getY() > mapY) {
+            auto shift = (uint16_t) (location->getY() - mapY);
+            screen->shiftUp(shift);
+        }
+
+        if (location->getX() < HALF_SCREEN) {
+            auto shift = (uint16_t) (HALF_SCREEN - location->getX());
+            screen->shiftLeft(shift);
+        }
+
+        if (location->getX() > (mapX - SCREEN_SIZE)) {
+            auto shift = (uint16_t) (location->getX() - (mapX - SCREEN_SIZE));
+            screen->shiftRight(shift);
+        }
+
+        // Render the map.
+        for (int x = -SCREEN_SIZE; x <= SCREEN_SIZE; x++) {
+            for (int y = -SCREEN_SIZE; y <= SCREEN_SIZE; y++) {
+                // Get the relative map coordinates for the players position.
+                int relative_x = (x) + location->getX();
+                int relative_y = (HALF_SCREEN + y) - location->getY();
+
+                // Do not render unmapped coordinates.
+                if (relative_x < 0 || relative_x >= mapX || relative_y < 0 || relative_y >= mapY) {
+                    continue;
+                }
+
+                if (map[relative_y][relative_x] == 1) {
+                    screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
+                }
+            }
+        }
+
+//        if (location->getY() <= HALF_SCREEN) {
+//            uint16_t shift = (uint16_t) (HALF_SCREEN - location->getY() - 1);
+//            screen->shiftDown(shift);
+//        }
+//
+//        if (location->getY() > mapY) {
+//            uint16_t shift = (uint16_t) location->getY() - (uint16_t) mapY;
+//            screen->shiftUp(shift);
+//        }
+//
+//        if (location->getX() < HALF_SCREEN) {
+//            uint16_t shift = (uint16_t) (HALF_SCREEN - location->getX());
+//            screen->shiftLeft(shift);
+//        }
+//
+//        if (location->getY() > mapX) {
+//            uint16_t shift = (uint16_t) location->getX() - (uint16_t) mapX;
+//            screen->shiftRight(shift);
+//        }
     }
 
     void Game::gameLoop() {

@@ -10,9 +10,11 @@ namespace platformer {
     class Game {
     private:
         static const int TICK_RATE = 200;
+        static const int SCREEN_SIZE = 5; // Both X/Y sizes are equal on the micro:bit.
+        static const int HALF_SCREEN = 2; // Used for relational rendering to player.
 
         MicroBit *microBit = new MicroBit();
-        MicroBitImage *screen = new MicroBitImage((int16_t) 5, (int16_t) 5);
+        MicroBitImage *screen = new MicroBitImage(SCREEN_SIZE, SCREEN_SIZE);
         Player *player = new Player();
         int state = 0;
         int score = 0;
