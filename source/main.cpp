@@ -6,7 +6,7 @@ int main() {
     game->getMicroBit()->init();
 
     // Welcome message
-    game->getMicroBit()->display.scroll("PLATFORMER!", 80);
+//    game->getMicroBit()->display.scroll("PLATFORMER!", 80);
 
     // Keep playing until complete
     while (!game->complete()) {

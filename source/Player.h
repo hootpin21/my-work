@@ -7,6 +7,8 @@ namespace platformer {
 
     class Player {
     private:
+        static const int JUMP_HEIGHT = 3;
+
         Vector2i *location = new Vector2i();
         Vector2i *velocity = new Vector2i();
     public:

@@ -10,7 +10,6 @@ namespace platformer {
 //                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 //                {0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
 //                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-//                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 //                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 //        };
 
@@ -23,8 +22,8 @@ namespace platformer {
             game->jump(event);
         }
 
-        void mechanicsHelper() {
-            game->mechanics();
+        void gameLoopHelper() {
+            game->gameLoop();
         }
     }
 
@@ -34,11 +33,16 @@ namespace platformer {
         microBit->display.scroll(score);
     }
 
+    void Game::jump(MicroBitEvent) {
+        player->jump();
+    }
+
     void Game::tick() {
         Vector2i *location = player->getLocation();
+        Vector2i *velocity = player->getVelocity();
 
         if (!player->isOnGround()) {
-            location->addY(-1);
+            velocity->addY(-1);
         }
 
         int accelerometerX = microBit->accelerometer.getX();
@@ -51,16 +55,39 @@ namespace platformer {
             location->addX(1);
         }
 
-        microBit->sleep(TICK_SPEED);
+        if (velocity->getY() > 0) {
+            location->addY(1);
+        } else if (velocity->getY() < 0) {
+            location->addY(-1);
+
+            if (location->getY() < 0) {
+                location->setY(0);
+                velocity->setY(0);
+            }
+        }
+
+        if (velocity->getX() > 0) {
+            location->addX(1);
+        } else if (velocity->getX() < 0) {
+            location->addX(-1);
+        }
+
+        microBit->sleep(TICK_RATE);
     }
 
-    void Game::jump(MicroBitEvent) {
-        player->jump();
+    void Game::render() {
+        // Ensure the screen is clear.
+        screen->clear();
+
+        // Render the player.
+        Vector2i *location = player->getLocation();
+        screen->setPixelValue((int16_t) location->getX(), (int16_t) location->getY(), 255);
     }
 
-    void Game::mechanics() {
+    void Game::gameLoop() {
         while (!state) {
             tick();
+            render();
         }
     }
 
@@ -69,13 +96,11 @@ namespace platformer {
         state = 0;
         score = 0;
         player->getLocation()->set(2, 3);
-
-        // Ensure the screen is clear.
         screen->clear();
 
-        // Spawn fiber to handle the game mechanics.
+        // Spawn fiber to handle the game loop.
         game = this;
-        create_fiber(mechanicsHelper);
+        create_fiber(gameLoopHelper);
 
         // Register event handlers for button presses.
         microBit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_CLICK, jumpHelper);
@@ -83,8 +108,6 @@ namespace platformer {
 
         // Now just keep the screen refreshed.
         while (!state) {
-            Vector2i *location = player->getLocation();
-            screen->setPixelValue((int16_t) location->getX(), (int16_t) location->getY(), 255);
             microBit->display.image.paste(*screen);
             microBit->sleep(10);
         }

@@ -5,9 +5,13 @@ namespace platformer {
 
     class Vector2i {
     private:
-        int x;
-        int y;
+        int x = 0;
+        int y = 0;
     public:
+        Vector2i();
+
+        Vector2i(int x, int y);
+
         void set(int x, int y);
 
         void add(int x, int y);

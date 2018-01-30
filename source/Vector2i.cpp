@@ -2,6 +2,10 @@
 
 namespace platformer {
 
+    Vector2i::Vector2i() = default;
+
+    Vector2i::Vector2i(int x, int y) : x(x), y(y) {}
+
     void Vector2i::set(int x, int y) {
         Vector2i::x = x;
         Vector2i::y = y;

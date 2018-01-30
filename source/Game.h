@@ -5,12 +5,12 @@
 #include "Player.h"
 #include "MicroBit.h"
 
-#define TICK_SPEED 50
-
 namespace platformer {
 
     class Game {
     private:
+        static const int TICK_RATE = 200;
+
         MicroBit *microBit = new MicroBit();
         MicroBitImage *screen = new MicroBitImage((int16_t) 5, (int16_t) 5);
         Player *player = new Player();
@@ -25,7 +25,9 @@ namespace platformer {
 
         void tick();
 
-        void mechanics();
+        void render();
+
+        void gameLoop();
 
         void run();
 
