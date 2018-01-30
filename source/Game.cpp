@@ -7,12 +7,12 @@ namespace platformer {
         const int mapY = 7;
 
         char map[mapY][mapX] = {
+                "---------.----------",
+                "-------------.------",
                 "--------------------",
-                "--------------------",
-                "--------------------",
-                "--------+++-------+-",
+                "----.---+++-------+-",
                 "-----++----------++-",
-                "---.--------++----+-",
+                "--.---------++----+-",
                 "++++------------++++"
         };
 
@@ -43,10 +43,17 @@ namespace platformer {
     void Game::tick() {
         Vector2i *location = player->getLocation();
         Vector2i *velocity = player->getVelocity();
+        Vector2i relativeCenter = getRelativeLocation(0, 0);
 
+        BlockType center = getBlock(&relativeCenter);
         BlockType below = getRelativeBlock(0, 1);
         BlockType left = getRelativeBlock(-1, 0);
         BlockType right = getRelativeBlock(1, 0);
+
+        if (center == COIN_OFF || center == COIN_ON) {
+            map[relativeCenter.getY()][relativeCenter.getX()] = AIR;
+            score++;
+        }
 
         if (below != SOLID) {
             velocity->addY(-1);
