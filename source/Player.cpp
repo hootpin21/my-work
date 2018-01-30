@@ -15,7 +15,9 @@ namespace platformer {
     }
 
     void Player::jump() {
-        velocity->addY(JUMP_HEIGHT);
+        if (isOnGround()) {
+            velocity->addY(JUMP_HEIGHT);
+        }
     }
 
     Vector2i *Player::getVelocity() const {
