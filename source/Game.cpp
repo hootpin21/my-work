@@ -45,6 +45,8 @@ namespace platformer {
         Vector2i *velocity = player->getVelocity();
 
         BlockType below = getRelativeBlock(0, 1);
+        BlockType left = getRelativeBlock(-1, 0);
+        BlockType right = getRelativeBlock(1, 0);
 
         if (below != SOLID) {
             velocity->addY(-1);
@@ -52,11 +54,11 @@ namespace platformer {
 
         int accelerometerX = microBit->accelerometer.getX();
 
-        if (accelerometerX < -300 && location->getX() > 0) {
+        if (accelerometerX < -300 && location->getX() > 0 && left != SOLID) {
             location->addX(-1);
         }
 
-        if (accelerometerX > 300 && location->getX() < (mapX - 2)) {
+        if (accelerometerX > 300 && location->getX() < (mapX - 2) && right != SOLID) {
             location->addX(1);
         }
 
