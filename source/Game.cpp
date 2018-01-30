@@ -3,17 +3,17 @@
 namespace platformer {
 
     namespace {
-        const int mapX = 10;
+        const int mapX = 21;
         const int mapY = 7;
 
         char map[mapY][mapX] = {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 1, 1, 1, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+                "--------------------",
+                "--------------------",
+                "--------------------",
+                "--------+++-------+-",
+                "-----++----------++-",
+                "---.--------++----+-",
+                "++++------------++++"
         };
 
         // This is an incredibly gross hack to get things working. Apparently
@@ -54,7 +54,7 @@ namespace platformer {
             location->addX(-1);
         }
 
-        if (accelerometerX > 300 && location->getX() < (mapX -1)) {
+        if (accelerometerX > 300 && location->getX() < (mapX - 2)) {
             location->addX(1);
         }
 
@@ -99,8 +99,8 @@ namespace platformer {
             offsetX -= HALF_SCREEN - location->getX();
         }
 
-        if (location->getX() >= (mapX - HALF_SCREEN)) {
-            offsetX += HALF_SCREEN - ((mapX - 1) - location->getX());
+        if (location->getX() >= (mapX - HALF_SCREEN - 1)) {
+            offsetX += HALF_SCREEN - ((mapX - 2) - location->getX());
         }
 
         screen->setPixelValue((uint16_t) offsetX, (uint16_t) offsetY, 255);
@@ -108,20 +108,49 @@ namespace platformer {
         // Render the map.
         for (int x = 0; x < SCREEN_SIZE; x++) {
             for (int y = 0; y < SCREEN_SIZE; y++) {
-                // Get the relative map coordinates for the players position.
-                int relativeX = (x - offsetX) + location->getX();
-                int relativeY = (y - offsetY) + ((mapY - 1) - location->getY());
-
-                // Do not render unmapped coordinates.
-                if (relativeX < 0 || relativeX >= mapX || relativeY < 0 || relativeY >= mapY) {
-                    continue;
-                }
-
-                if (map[relativeY][relativeX] == 1) {
-                    screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
-                }
+                renderBlock(offsetX, offsetY, x, y);
             }
         }
+    }
+
+    void Game::renderBlock(int offsetX, int offsetY, int x, int y) const {
+        Vector2i blockLocation = getRelativeLocation(x - offsetX, y - offsetY);
+        BlockType blockType = getBlock(&blockLocation);
+
+        switch (blockType) {
+            case AIR:
+                break;
+            case BLOCK:
+                screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
+                break;
+            case COIN_ON:
+                screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
+                map[blockLocation.getY()][blockLocation.getX()] = COIN_OFF;
+                break;
+            case COIN_OFF:
+                map[blockLocation.getY()][blockLocation.getX()] = COIN_ON;
+                break;
+        }
+    }
+
+    Vector2i Game::getRelativeLocation(int offsetX, int offsetY) const {
+        int relativeX = offsetX + player->getLocation()->getX();
+        int relativeY = offsetY + ((mapY - 1) - player->getLocation()->getY());
+        return {relativeX, relativeY};
+    }
+
+    BlockType Game::getRelativeBlock(int offsetX, int offsetY) const {
+        Vector2i location = getRelativeLocation(offsetX, offsetY);
+        BlockType blockType = getBlock(&location);
+        return blockType;
+    }
+
+    BlockType Game::getBlock(const Vector2i *location) const {
+        if (location->getX() < 0 || location->getX() >= (mapX - 1) ||
+            location->getY() < 0 || location->getY() >= mapY) {
+            return AIR;
+        }
+        return (BlockType) map[location->getY()][location->getX()];
     }
 
     void Game::gameLoop() {
@@ -135,7 +164,7 @@ namespace platformer {
         // Reset all game state.
         state = 0;
         score = 0;
-        player->getLocation()->set(2, 3);
+        player->getLocation()->set(1, 5);
         screen->clear();
 
         // Spawn fiber to handle the game loop.

@@ -7,6 +7,13 @@
 
 namespace platformer {
 
+    enum BlockType : char {
+        AIR = '-',
+        BLOCK = '+',
+        COIN_ON = '.',
+        COIN_OFF = ','
+    };
+
     class Game {
     private:
         static const int TICK_RATE = 200;
@@ -48,6 +55,14 @@ namespace platformer {
         void setScore(int score);
 
         bool complete();
+
+        Vector2i getRelativeLocation(int offsetX, int offsetY) const;
+
+        BlockType getRelativeBlock(int offsetX, int offsetY) const;
+
+        BlockType getBlock(const Vector2i *location) const;
+
+        void renderBlock(int offsetX, int offsetY, int x, int y) const;
     };
 
 } // namespace platformer
