@@ -15,6 +15,13 @@ namespace platformer {
         COIN_OFF = ','
     };
 
+    enum GameState {
+        INIT,
+        RUNNING,
+        RESET,
+        COMPLETE
+    };
+
     class Game {
     private:
         static const int TICK_RATE = 200;
@@ -24,7 +31,7 @@ namespace platformer {
         MicroBit *microBit = new MicroBit();
         MicroBitImage *screen = new MicroBitImage(SCREEN_SIZE, SCREEN_SIZE);
         Player *player = new Player();
-        int state = 0;
+        GameState state = INIT;
         int score = 0;
     public:
         virtual ~Game();
@@ -37,8 +44,6 @@ namespace platformer {
 
         void render();
 
-        void gameLoop();
-
         void run();
 
         MicroBit *getMicroBit() const;
@@ -47,15 +52,13 @@ namespace platformer {
 
         Player *getPlayer() const;
 
-        int getState() const;
+        GameState getState() const;
 
-        void setState(int state);
+        void setState(GameState state);
 
         int getScore() const;
 
         void setScore(int score);
-
-        bool complete();
 
         Vector2i getRelativeLocation(int offsetX, int offsetY) const;
 

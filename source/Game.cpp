@@ -21,12 +21,12 @@ namespace platformer {
         // TODO: Figure out how to implement this more elegantly.
         Game *game;
 
-        void jumpHelper(MicroBitEvent event) {
+        void onButtonAPress(MicroBitEvent event) {
             game->jump(event);
         }
 
-        void gameLoopHelper() {
-            game->gameLoop();
+        void onButtonBPress(MicroBitEvent event) {
+            game->jump(event);
         }
     }
 
@@ -87,8 +87,6 @@ namespace platformer {
         } else if (velocity->getX() < 0) {
             location->addX(-1);
         }
-
-        microBit->sleep(TICK_RATE);
     }
 
     void Game::render() {
@@ -167,32 +165,26 @@ namespace platformer {
         return (BlockType) map[location->getY()][location->getX()];
     }
 
-    void Game::gameLoop() {
-        while (!state) {
-            tick();
-            render();
-        }
-    }
-
     void Game::run() {
         // Reset all game state.
-        state = 0;
+        state = RESET;
         score = 0;
         player->getLocation()->set(1, 5);
         screen->clear();
-
-        // Spawn fiber to handle the game loop.
         game = this;
-        create_fiber(gameLoopHelper);
 
         // Register event handlers for button presses.
-        microBit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_CLICK, jumpHelper);
-        microBit->messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_BUTTON_EVT_CLICK, jumpHelper);
+        microBit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_CLICK, onButtonAPress);
+        microBit->messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_BUTTON_EVT_CLICK, onButtonBPress);
 
-        // Now just keep the screen refreshed.
-        while (!state) {
+        // Now enter the game loop.
+        state = RUNNING;
+
+        while (state == RUNNING) {
+            tick();
+            render();
             microBit->display.image.paste(*screen);
-            microBit->sleep(10);
+            microBit->sleep(TICK_RATE);
         }
 
         // Display GAME OVER and score
@@ -217,11 +209,11 @@ namespace platformer {
         return player;
     }
 
-    int Game::getState() const {
+    GameState Game::getState() const {
         return state;
     }
 
-    void Game::setState(int state) {
+    void Game::setState(GameState state) {
         Game::state = state;
     }
 
@@ -231,10 +223,6 @@ namespace platformer {
 
     void Game::setScore(int score) {
         Game::score = score;
-    }
-
-    bool Game::complete() {
-        return false;
     }
 
 } // namespace platformer
