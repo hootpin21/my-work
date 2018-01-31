@@ -11,8 +11,7 @@ namespace platformer {
         AIR = '-',
         FOREGROUND = '+',
         BACKGROUND = '=',
-        COIN_ON = '.',
-        COIN_OFF = ','
+        COIN = '.'
     };
 
     class World {

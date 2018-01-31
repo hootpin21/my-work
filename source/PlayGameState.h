@@ -16,6 +16,7 @@ namespace platformer {
         Player *player = new Player();
         World *world = createWorld1();
         Game *game;
+        bool displayCoins = false;
     public:
         explicit PlayGameState(Game *game);
 

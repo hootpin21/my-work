@@ -50,7 +50,7 @@ namespace platformer {
         BlockType left = world->getRelativeBlock(*player->getLocation(), -1, 0);
         BlockType right = world->getRelativeBlock(*player->getLocation(), 1, 0);
 
-        if (center == COIN_OFF || center == COIN_ON) {
+        if (center == COIN) {
             world->setBlock(relativeCenter, AIR);
             score++;
         }
@@ -90,6 +90,8 @@ namespace platformer {
         } else if (velocity->getX() < 0) {
             location->addX(-1);
         }
+
+        displayCoins = !displayCoins;
     }
 
     void PlayGameState::render() {
@@ -135,12 +137,10 @@ namespace platformer {
             case BACKGROUND:
                 game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) y, 255);
                 break;
-            case COIN_ON:
-                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) y, 255);
-                world->setBlock(blockLocation, COIN_OFF);
-                break;
-            case COIN_OFF:
-                world->setBlock(blockLocation, COIN_ON);
+            case COIN:
+                if (displayCoins) {
+                    game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) y, 255);
+                }
                 break;
         }
     }
