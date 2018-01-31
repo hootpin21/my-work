@@ -3,19 +3,6 @@
 namespace platformer {
 
     namespace {
-        const int mapX = 21;
-        const int mapY = 7;
-
-        char map[mapY][mapX] = {
-                "---------.----------",
-                "-------------.------",
-                "------------------=-",
-                "----.---+++------==-",
-                "-----++-----------=-",
-                "--.---------++----=-",
-                "++++------------++++"
-        };
-
         // This is an incredibly gross hack to get things working. Apparently
         // the API dislikes function pointers to class members.
         // TODO: Figure out how to implement this more elegantly.
@@ -30,31 +17,25 @@ namespace platformer {
         }
     }
 
-    void Game::gameOver() {
-        microBit->display.clear();
-        microBit->display.scroll("GAME OVER! SCORE:");
-        microBit->display.scroll(score);
-    }
-
     void Game::jump(MicroBitEvent) {
-        BlockType below = getRelativeBlock(0, 1);
+        BlockType below = world->getRelativeBlock(*player->getLocation(), 0, 1);
         if (below == FOREGROUND) {
             player->jump();
         }
     }
 
-    void Game::tick() {
+    void Game::tickRunning() {
         Vector2i *location = player->getLocation();
         Vector2i *velocity = player->getVelocity();
-        Vector2i relativeCenter = getRelativeLocation(0, 0);
+        Vector2i relativeCenter = world->getRelativeLocation(*player->getLocation(), 0, 0);
 
-        BlockType center = getBlock(&relativeCenter);
-        BlockType below = getRelativeBlock(0, 1);
-        BlockType left = getRelativeBlock(-1, 0);
-        BlockType right = getRelativeBlock(1, 0);
+        BlockType center = world->getBlock(relativeCenter);
+        BlockType below = world->getRelativeBlock(*player->getLocation(), 0, 1);
+        BlockType left = world->getRelativeBlock(*player->getLocation(), -1, 0);
+        BlockType right = world->getRelativeBlock(*player->getLocation(), 1, 0);
 
         if (center == COIN_OFF || center == COIN_ON) {
-            map[relativeCenter.getY()][relativeCenter.getX()] = AIR;
+            world->setBlock(relativeCenter, AIR);
             score++;
         }
 
@@ -68,7 +49,7 @@ namespace platformer {
             location->addX(-1);
         }
 
-        if (accelerometerX > 300 && location->getX() < (mapX - 2) && right != FOREGROUND) {
+        if (accelerometerX > 300 && location->getX() < (world->getMaxX() - 2) && right != FOREGROUND) {
             location->addX(1);
         }
 
@@ -79,6 +60,10 @@ namespace platformer {
                 velocity->setY(0);
             } else {
                 location->addY(-1);
+
+                if (location->getY() < 0) {
+                    state = GAME_OVER;
+                }
             }
         }
 
@@ -89,10 +74,7 @@ namespace platformer {
         }
     }
 
-    void Game::render() {
-        // Ensure the screen is clear.
-        screen->clear();
-
+    void Game::renderRunning() const {
         // Render the player.
         Vector2i *location = player->getLocation();
         int offsetX = HALF_SCREEN;
@@ -102,16 +84,16 @@ namespace platformer {
             offsetY += HALF_SCREEN - location->getY();
         }
 
-        if (location->getY() >= (mapY - HALF_SCREEN)) {
-            offsetY -= HALF_SCREEN - ((mapY - 1) - location->getY());
+        if (location->getY() >= (world->getMaxY() - HALF_SCREEN)) {
+            offsetY -= HALF_SCREEN - ((world->getMaxY() - 1) - location->getY());
         }
 
         if (location->getX() <= HALF_SCREEN) {
             offsetX -= HALF_SCREEN - location->getX();
         }
 
-        if (location->getX() >= (mapX - HALF_SCREEN - 1)) {
-            offsetX += HALF_SCREEN - ((mapX - 2) - location->getX());
+        if (location->getX() >= (world->getMaxX() - HALF_SCREEN - 1)) {
+            offsetX += HALF_SCREEN - ((world->getMaxX() - 2) - location->getX());
         }
 
         screen->setPixelValue((uint16_t) offsetX, (uint16_t) offsetY, 255);
@@ -125,8 +107,8 @@ namespace platformer {
     }
 
     void Game::renderBlock(int offsetX, int offsetY, int x, int y) const {
-        Vector2i blockLocation = getRelativeLocation(x - offsetX, y - offsetY);
-        BlockType blockType = getBlock(&blockLocation);
+        Vector2i blockLocation = world->getRelativeLocation(*player->getLocation(), x - offsetX, y - offsetY);
+        BlockType blockType = world->getBlock(blockLocation);
 
         switch (blockType) {
             case AIR:
@@ -137,38 +119,39 @@ namespace platformer {
                 break;
             case COIN_ON:
                 screen->setPixelValue((uint16_t) x, (uint16_t) y, 255);
-                map[blockLocation.getY()][blockLocation.getX()] = COIN_OFF;
+                world->setBlock(blockLocation, COIN_OFF);
                 break;
             case COIN_OFF:
-                map[blockLocation.getY()][blockLocation.getX()] = COIN_ON;
+                world->setBlock(blockLocation, COIN_ON);
                 break;
         }
     }
 
-    Vector2i Game::getRelativeLocation(int offsetX, int offsetY) const {
-        int relativeX = offsetX + player->getLocation()->getX();
-        int relativeY = offsetY + ((mapY - 1) - player->getLocation()->getY());
-        return {relativeX, relativeY};
-    }
+    void Game::tickGameOver() {
+        gameOverTicks++;
 
-    BlockType Game::getRelativeBlock(int offsetX, int offsetY) const {
-        Vector2i location = getRelativeLocation(offsetX, offsetY);
-        BlockType blockType = getBlock(&location);
-        return blockType;
-    }
-
-    BlockType Game::getBlock(const Vector2i *location) const {
-        if (location->getX() < 0 || location->getX() >= (mapX - 1) ||
-            location->getY() < 0 || location->getY() >= mapY) {
-            return AIR;
+        if (gameOverTicks >= GAME_OVER_FLASHES) {
+            state = RESET;
         }
-        return (BlockType) map[location->getY()][location->getX()];
+    }
+
+    void Game::renderGameOver() const {
+        if (gameOverTicks % 2 == 0) {
+            return;
+        }
+
+        for (uint16_t x = 0; x < SCREEN_SIZE; x++) {
+            for (uint16_t y = 0; y < SCREEN_SIZE; y++) {
+                screen->setPixelValue(x, y, 255);
+            }
+        }
     }
 
     void Game::run() {
         // Reset all game state.
         state = RESET;
         score = 0;
+        gameOverTicks = 0;
         player->getLocation()->set(1, 5);
         screen->clear();
         game = this;
@@ -180,15 +163,31 @@ namespace platformer {
         // Now enter the game loop.
         state = RUNNING;
 
-        while (state == RUNNING) {
-            tick();
-            render();
+        while (state != RESET) {
+
+            // Ensure the screen is clear.
+            screen->clear();
+
+            switch (state) {
+                case RUNNING:
+                    tickRunning();
+                    renderRunning();
+                    break;
+                case GAME_OVER:
+                    tickGameOver();
+                    renderGameOver();
+                    break;
+                case INIT:
+                    break;
+                case RESET:
+                    break;
+                case COMPLETE:
+                    break;
+            }
+
             microBit->display.image.paste(*screen);
             microBit->sleep(TICK_RATE);
         }
-
-        // Display GAME OVER and score
-        gameOver();
     }
 
     Game::~Game() {

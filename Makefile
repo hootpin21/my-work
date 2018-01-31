@@ -8,7 +8,9 @@ SOURCE_FILES += \
     source/Player.cpp \
     source/Player.h \
     source/Vector2i.cpp \
-    source/Vector2i.h
+    source/Vector2i.h \
+    source/World.cpp \
+    source/World.h
 
 OUTPUT_FILE = build/bbc-microbit-classic-gcc/source/microbit-platformer-combined.hex
 

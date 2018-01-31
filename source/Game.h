@@ -4,20 +4,14 @@
 #include <cstdint>
 #include "Player.h"
 #include "MicroBit.h"
+#include "World.h"
 
 namespace platformer {
-
-    enum BlockType : char {
-        AIR = '-',
-        FOREGROUND = '+',
-        BACKGROUND = '=',
-        COIN_ON = '.',
-        COIN_OFF = ','
-    };
 
     enum GameState {
         INIT,
         RUNNING,
+        GAME_OVER,
         RESET,
         COMPLETE
     };
@@ -27,22 +21,23 @@ namespace platformer {
         static const int TICK_RATE = 200;
         static const int SCREEN_SIZE = 5; // Both X/Y sizes are equal on the micro:bit.
         static const int HALF_SCREEN = 2; // Used for relational rendering to player.
+        static const int GAME_OVER_FLASHES = 5;
 
         MicroBit *microBit = new MicroBit();
         MicroBitImage *screen = new MicroBitImage(SCREEN_SIZE, SCREEN_SIZE);
         Player *player = new Player();
+        World *world = createWorld1();
         GameState state = INIT;
         int score = 0;
+        int gameOverTicks = 0;
     public:
         virtual ~Game();
 
-        void gameOver();
-
         void jump(MicroBitEvent event);
 
-        void tick();
+        void tickRunning();
 
-        void render();
+        void tickGameOver();
 
         void run();
 
@@ -60,13 +55,11 @@ namespace platformer {
 
         void setScore(int score);
 
-        Vector2i getRelativeLocation(int offsetX, int offsetY) const;
-
-        BlockType getRelativeBlock(int offsetX, int offsetY) const;
-
-        BlockType getBlock(const Vector2i *location) const;
-
         void renderBlock(int offsetX, int offsetY, int x, int y) const;
+
+        void renderRunning() const;
+
+        void renderGameOver() const;
     };
 
 } // namespace platformer
