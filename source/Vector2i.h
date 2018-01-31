@@ -29,6 +29,6 @@ namespace platformer {
         void setY(int y);
     };
 
-} // namespace platformer
+}
 
 #endif // PLATFORMER_VECTOR2I_H

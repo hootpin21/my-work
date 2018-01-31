@@ -40,4 +40,4 @@ namespace platformer {
         Vector2i::y += y;
     }
 
-} // namespace platformer
+}

@@ -27,6 +27,6 @@ namespace platformer {
         void setVelocity(Vector2i *velocity);
     };
 
-} // namespace platformer
+}
 
 #endif // PLATFORMER_PLAYER_H

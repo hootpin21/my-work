@@ -31,4 +31,4 @@ namespace platformer {
         delete velocity;
     }
 
-} // namespace platformer
+}
