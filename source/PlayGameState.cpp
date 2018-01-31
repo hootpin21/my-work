@@ -94,7 +94,7 @@ namespace platformer {
         displayCoins = !displayCoins;
     }
 
-    void PlayGameState::render() {
+    void PlayGameState::render() const {
         // Render the player.
         Vector2i *location = player->getLocation();
         int offsetX = HALF_SCREEN;

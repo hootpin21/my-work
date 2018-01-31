@@ -32,7 +32,7 @@ namespace platformer {
 
         void tick();
 
-        void render();
+        void render() const;
 
         void renderBlock(int offsetX, int offsetY, int x, int y) const;
     };

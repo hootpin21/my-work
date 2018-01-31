@@ -23,7 +23,7 @@ namespace platformer {
 
         void tick();
 
-        void render();
+        void render() const;
     };
 
 }

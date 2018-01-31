@@ -34,7 +34,7 @@ namespace platformer {
         }
     }
 
-    void GameOverGameState::render() {
+    void GameOverGameState::render() const {
         if (gameOverTicks % 2 == 0) {
             return;
         }
