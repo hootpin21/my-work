@@ -49,6 +49,7 @@ namespace platformer {
         Vector2i relativeCenter = world->getRelativeLocation(*player->getLocation(), 0, 0);
 
         BlockType center = world->getBlock(relativeCenter);
+        BlockType above = world->getRelativeBlock(*player->getLocation(), 0, -1);
         BlockType below = world->getRelativeBlock(*player->getLocation(), 0, 1);
         BlockType left = world->getRelativeBlock(*player->getLocation(), -1, 0);
         BlockType right = world->getRelativeBlock(*player->getLocation(), 1, 0);
@@ -65,6 +66,10 @@ namespace platformer {
         if (center == COIN) {
             world->setBlock(relativeCenter, AIR);
             score++;
+        }
+
+        if (above == SOLID && velocity->getY() > 0) {
+            velocity->setY(0);
         }
 
         if (below != SOLID) {
