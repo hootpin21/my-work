@@ -8,11 +8,15 @@ namespace platformer {
         Game *game = nullptr; // Singleton reference.
 
         void onButtonAPress(MicroBitEvent) {
-            game->getState()->onButtonAPress();
+            if (!game->isChangingState()) {
+                game->getState()->onButtonAPress();
+            }
         }
 
         void onButtonBPress(MicroBitEvent) {
-            game->getState()->onButtonBPress();
+            if (!game->isChangingState()) {
+                game->getState()->onButtonBPress();
+            }
         }
     }
 
@@ -25,6 +29,7 @@ namespace platformer {
         state = new Menu(this);
 
         while (state != nullptr) {
+            changingState = false;
             state->run();
         }
     }
@@ -51,7 +56,12 @@ namespace platformer {
     }
 
     void Game::setState(GameState *state) {
+        changingState = true;
         Game::state = state;
+    }
+
+    bool Game::isChangingState() const {
+        return changingState;
     }
 
 }

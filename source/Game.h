@@ -16,6 +16,7 @@ namespace platformer {
         MicroBit *microBit = new MicroBit();
         MicroBitImage *screen = new MicroBitImage(SCREEN_SIZE, SCREEN_SIZE);
         GameState *state;
+        bool changingState = false;
     public:
         Game();
 
@@ -30,6 +31,8 @@ namespace platformer {
         GameState *getState() const;
 
         void setState(GameState *state);
+
+        bool isChangingState() const;
     };
 
 }
