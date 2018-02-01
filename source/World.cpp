@@ -103,6 +103,38 @@ namespace platformer {
         return new World(3, 42, 10, map);
     }
 
+    World *createWorld4() {
+        std::vector<std::string *> map = {
+                new std::string(" .               .                        "),
+                new std::string("  .      .                     .          "),
+                new std::string(" .   +++ .       .      .                 "),
+                new std::string(" ++  +   +                     +  .       "),
+                new std::string("  ++ +          +++         . ++          "),
+                new std::string("     +   .  +++     +++  +  .     .     = "),
+                new std::string("    ++   .                  .          == "),
+                new std::string("         +                  +     .     = "),
+                new std::string("            .               ++   +++    = "),
+                new std::string("++++++++    +                ++       ++++")
+        };
+        return new World(4, 42, 10, map);
+    }
+
+    World *createWorld5() {
+        std::vector<std::string *> map = {
+                new std::string("                    +..                   "),
+                new std::string(" .                  +..                   "),
+                new std::string(" .                  +..                   "),
+                new std::string(" .                  +++  .                "),
+                new std::string(" .                  + ++                  "),
+                new std::string(" +   .    .    .    +    .   .   .      = "),
+                new std::string("   .              +++++            .   == "),
+                new std::string("     +    +    +         +   +   +      = "),
+                new std::string("                  . . .                 = "),
+                new std::string("++++             ++ + ++             +++++")
+        };
+        return new World(5, 42, 10, map);
+    }
+
     World *createWorld(int id) {
         switch (id) {
             case 1:
@@ -111,6 +143,10 @@ namespace platformer {
                 return createWorld2();
             case 3:
                 return createWorld3();
+            case 4:
+                return createWorld4();
+            case 5:
+                return createWorld5();
             default: // Invalid world selected, send back default.
                 return createWorld1();
         }
