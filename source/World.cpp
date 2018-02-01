@@ -2,8 +2,14 @@
 
 namespace platformer {
 
-    World::World(const int maxX, const int maxY, std::vector<std::string> &map) : maxX(maxX), maxY(maxY),
-                                                                                  map(map) {}
+    World::World(const int maxX, const int maxY, std::vector<std::string *> &map) : maxX(maxX), maxY(maxY),
+                                                                                    map(map) {}
+
+    World::~World() {
+        for (std::string *row : map) {
+            delete row;
+        }
+    }
 
     int World::getMinX() const {
         return minX;
@@ -21,7 +27,7 @@ namespace platformer {
         return maxY;
     }
 
-    std::vector<std::string> &World::getMap() {
+    std::vector<std::string *> &World::getMap() {
         return map;
     }
 
@@ -42,43 +48,67 @@ namespace platformer {
             location.getY() < 0 || location.getY() >= maxY) {
             return AIR;
         }
-        return (BlockType) map[location.getY()][location.getX()];
+        return (BlockType) map.at((size_t) location.getY())->at((size_t) location.getX());
     }
 
     void World::setBlock(const Vector2i location, BlockType type) {
-        std::string row = map.at((size_t) location.getY());
-        row.at((size_t) location.getX()) = type;
+        std::string *row = map.at((size_t) location.getY());
+        row->at((size_t) location.getX()) = type;
         map.at((size_t) location.getY()) = row;
     }
 
-    World *createWorld(int id) {
-        std::vector<std::string> map;
+    World *createWorld1() {
+        std::vector<std::string *> map = {
+                new std::string("--------------------"),
+                new std::string("---------.----------"),
+                new std::string("-------.---.------=-"),
+                new std::string("-----------------==-"),
+                new std::string("-------+++++------=-"),
+                new std::string("---.--------------=-"),
+                new std::string("+++++---------++++++")
+        };
+        return new World(21, 7, map);
+    }
 
+    World *createWorld2() {
+        std::vector<std::string *> map = {
+                new std::string("---------.----------"),
+                new std::string("-------------.------"),
+                new std::string("------------------=-"),
+                new std::string("----.---+++------==-"),
+                new std::string("-----++-----------=-"),
+                new std::string("--.---------++----=-"),
+                new std::string("++++------------++++")
+        };
+        return new World(21, 7, map);
+    }
+
+    World *createWorld3() {
+        std::vector<std::string *> map = {
+                new std::string("------------------------------------------"),
+                new std::string("------------------------------------------"),
+                new std::string("------------------------------------------"),
+                new std::string("------------------------------------------"),
+                new std::string("------------------------------------------"),
+                new std::string("----------------------------------------=-"),
+                new std::string("---------------------------------------==-"),
+                new std::string("----.--+++-.-+++--+++----+++---+++------=-"),
+                new std::string("--------.------------.------------------=-"),
+                new std::string("++++++++++++++++++++++++++++++++++++++++++")
+        };
+        return new World(43, 10, map);
+    }
+
+    World *createWorld(int id) {
         switch (id) {
             case 1:
-                 map = {
-                        "--------------------",
-                        "---------.----------",
-                        "-------.---.------=-",
-                        "-----------------==-",
-                        "-------+++++------=-",
-                        "---.--------------=-",
-                        "+++++---------+++++++"
-                };
-                return new World(21, 7, map);
+                return createWorld1();
             case 2:
-                map = {
-                        "---------.----------",
-                        "-------------.------",
-                        "------------------=-",
-                        "----.---+++------==-",
-                        "-----++-----------=-",
-                        "--.---------++----=-",
-                        "++++------------++++"
-                };
-                return new World(21, 7, map);
+                return createWorld2();
+            case 3:
+                return createWorld3();
             default: // Invalid world selected, send back default.
-                return createWorld(1);
+                return createWorld1();
         }
     }
 }
