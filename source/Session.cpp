@@ -30,7 +30,7 @@ namespace platformer {
 
     void Session::run() {
         score = 0;
-        player->getLocation()->set(1, 5);
+        player->getLocation()->set(1, 1);
 
         while (game->getState() == this) {
             game->getScreen()->clear();

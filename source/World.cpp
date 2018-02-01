@@ -59,42 +59,42 @@ namespace platformer {
 
     World *createWorld1() {
         std::vector<std::string *> map = {
-                new std::string("--------------------"),
-                new std::string("---------.----------"),
-                new std::string("-------.---.------=-"),
-                new std::string("-----------------==-"),
-                new std::string("-------+++++------=-"),
-                new std::string("---.--------------=-"),
-                new std::string("+++++---------++++++")
+                new std::string("                    "),
+                new std::string(" .       .          "),
+                new std::string("+++    .   .      = "),
+                new std::string("                 == "),
+                new std::string("      +++++       = "),
+                new std::string("   .      ++++    = "),
+                new std::string("+++++        +++++++")
         };
         return new World(21, 7, map);
     }
 
     World *createWorld2() {
         std::vector<std::string *> map = {
-                new std::string("---------.----------"),
-                new std::string("-------------.------"),
-                new std::string("------------------=-"),
-                new std::string("----.---+++------==-"),
-                new std::string("-----++-----------=-"),
-                new std::string("--.---------++----=-"),
-                new std::string("++++------------++++")
+                new std::string("         .          "),
+                new std::string("             .      "),
+                new std::string("                  = "),
+                new std::string("    .   +++      == "),
+                new std::string("     ++           = "),
+                new std::string("  .         ++    = "),
+                new std::string("++++            ++++")
         };
         return new World(21, 7, map);
     }
 
     World *createWorld3() {
         std::vector<std::string *> map = {
-                new std::string("------------------------------------------"),
-                new std::string("------------------------------------------"),
-                new std::string("------------------------------------------"),
-                new std::string("------------------------------------------"),
-                new std::string("------------------------------------------"),
-                new std::string("----------------------------------------=-"),
-                new std::string("---------------------------------------==-"),
-                new std::string("----.--+++-.-+++--+++----+++---+++------=-"),
-                new std::string("--------.------------.------------------=-"),
-                new std::string("++++++++++++++++++++++++++++++++++++++++++")
+                new std::string("         ....+                            "),
+                new std::string("         +++++..                          "),
+                new std::string("++++         +++++    ++                  "),
+                new std::string("    . .      +..             .  .  .      "),
+                new std::string("             +..       .                  "),
+                new std::string("     +++ . . +++     .    +++           = "),
+                new std::string("  ++++       +                         == "),
+                new std::string("    .+   +++++    ++                    = "),
+                new std::string("     +           ++                     = "),
+                new std::string("++++++++++++++++++                   +++++")
         };
         return new World(43, 10, map);
     }
