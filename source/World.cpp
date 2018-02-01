@@ -33,7 +33,7 @@ namespace platformer {
 
     Vector2i World::getRelativeLocation(Vector2i location, int offsetX, int offsetY) const {
         int relativeX = offsetX + location.getX();
-        int relativeY = offsetY + ((maxY - 1) - location.getY());
+        int relativeY = (maxY - 1) - (offsetY + location.getY());
         return {relativeX, relativeY};
     }
 

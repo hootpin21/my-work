@@ -22,7 +22,7 @@ namespace platformer {
     }
 
     void Session::jump() {
-        BlockType below = world->getRelativeBlock(*player->getLocation(), 0, 1);
+        BlockType below = world->getRelativeBlock(*player->getLocation(), 0, -1);
         if (below == SOLID) {
             player->jump();
         }
@@ -49,8 +49,8 @@ namespace platformer {
         Vector2i relativeCenter = world->getRelativeLocation(*player->getLocation(), 0, 0);
 
         BlockType center = world->getBlock(relativeCenter);
-        BlockType above = world->getRelativeBlock(*player->getLocation(), 0, -1);
-        BlockType below = world->getRelativeBlock(*player->getLocation(), 0, 1);
+        BlockType above = world->getRelativeBlock(*player->getLocation(), 0, 1);
+        BlockType below = world->getRelativeBlock(*player->getLocation(), 0, -1);
         BlockType left = world->getRelativeBlock(*player->getLocation(), -1, 0);
         BlockType right = world->getRelativeBlock(*player->getLocation(), 1, 0);
 
@@ -118,11 +118,11 @@ namespace platformer {
         int offsetY = HALF_SCREEN;
 
         if (location->getY() <= HALF_SCREEN) {
-            offsetY += HALF_SCREEN - location->getY();
+            offsetY -= HALF_SCREEN - location->getY();
         }
 
         if (location->getY() >= (world->getMaxY() - HALF_SCREEN)) {
-            offsetY -= HALF_SCREEN - ((world->getMaxY() - 1) - location->getY());
+            offsetY += HALF_SCREEN - ((world->getMaxY() - 1) - location->getY());
         }
 
         if (location->getX() <= HALF_SCREEN) {
@@ -133,7 +133,7 @@ namespace platformer {
             offsetX += HALF_SCREEN - ((world->getMaxX() - 2) - location->getX());
         }
 
-        game->getScreen()->setPixelValue((uint16_t) offsetX, (uint16_t) offsetY, 255);
+        game->getScreen()->setPixelValue((uint16_t) offsetX, (uint16_t) (4-offsetY), 255);
 
         // Render the map.
         for (int x = 0; x < SCREEN_SIZE; x++) {
@@ -151,14 +151,14 @@ namespace platformer {
             case AIR:
                 break;
             case SOLID:
-                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) y, 8);
+                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4-y), 8);
                 break;
             case FLAG:
-                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) y, 48);
+                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4-y), 48);
                 break;
             case COIN:
                 if (displayCoins) {
-                    game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) y, 96);
+                    game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4-y), 96);
                 }
                 break;
         }
