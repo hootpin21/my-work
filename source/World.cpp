@@ -43,7 +43,7 @@ namespace platformer {
         return blockType;
     }
 
-    BlockType World::getBlock(const Vector2i location) const {
+    BlockType World::getBlock(Vector2i location) const {
         if (location.getX() < 0 || location.getX() >= (maxX - 1) ||
             location.getY() < 0 || location.getY() >= maxY) {
             return AIR;
@@ -51,7 +51,7 @@ namespace platformer {
         return (BlockType) map.at((size_t) location.getY())->at((size_t) location.getX());
     }
 
-    void World::setBlock(const Vector2i location, BlockType type) {
+    void World::setBlock(Vector2i location, BlockType type) {
         std::string *row = map.at((size_t) location.getY());
         row->at((size_t) location.getX()) = type;
         map.at((size_t) location.getY()) = row;
