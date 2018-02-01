@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
     // Initialise the micro:bit runtime.
     auto *game = new platformer::Game();
     game->getMicroBit()->init();
+    game->getMicroBit()->display.setDisplayMode(DISPLAY_MODE_GREYSCALE);
 
     // Continuously run the game.
     while (true) {

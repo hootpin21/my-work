@@ -1,17 +1,21 @@
-#include "GameOverGameState.h"
-#include "PlayGameState.h"
+#include "GameOver.h"
+#include "Session.h"
+#include "Menu.h"
 
 namespace platformer {
 
-    GameOverGameState::GameOverGameState(platformer::Game *game) : game(game) {}
+    GameOver::GameOver(Game *game) : game(game) {}
 
-    void GameOverGameState::onButtonAPress() {
+    void GameOver::onButtonAPress() {
+        game->getMicroBit()->display.stopAnimation();
+        auto *nextState = new Menu(game);
+        game->setState(nextState);
     }
 
-    void GameOverGameState::onButtonBPress() {
+    void GameOver::onButtonBPress() {
     }
 
-    void GameOverGameState::run() {
+    void GameOver::run() {
         gameOverTicks = 0;
 
         while (game->getState() == this) {
@@ -25,16 +29,16 @@ namespace platformer {
         delete this;
     }
 
-    void GameOverGameState::tick() {
+    void GameOver::tick() {
         gameOverTicks++;
 
         if (gameOverTicks >= GAME_OVER_FLASHES) {
-            auto *nextState = new PlayGameState(game);
+            auto *nextState = new Session(game, createWorld(0));
             game->setState(nextState);
         }
     }
 
-    void GameOverGameState::render() const {
+    void GameOver::render() const {
         if (gameOverTicks % 2 == 0) {
             return;
         }

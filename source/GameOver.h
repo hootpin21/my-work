@@ -1,11 +1,11 @@
-#ifndef PLATFORMER_GAMEOVERGAMESTATE_H
-#define PLATFORMER_GAMEOVERGAMESTATE_H
+#ifndef PLATFORMER_GAME_OVER_GAME_STATE_H
+#define PLATFORMER_GAME_OVER_GAME_STATE_H
 
 #include "Game.h"
 
 namespace platformer {
 
-    class GameOverGameState : public GameState {
+    class GameOver : public GameState {
     private:
         static const int TICK_RATE = 200;
         static const int GAME_OVER_FLASHES = 5;
@@ -13,7 +13,7 @@ namespace platformer {
         Game *game;
         int gameOverTicks = 0;
     public:
-        explicit GameOverGameState(Game *game);
+        explicit GameOver(Game *game);
 
         void onButtonAPress() override;
 
@@ -28,4 +28,4 @@ namespace platformer {
 
 }
 
-#endif //PLATFORMER_GAMEOVERGAMESTATE_H
+#endif //PLATFORMER_GAME_OVER_GAME_STATE_H

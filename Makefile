@@ -4,16 +4,18 @@ MICROBIT_PATH = /run/media/billy/MICROBIT
 SOURCE_FILES += \
     source/Game.cpp \
     source/Game.h \
-    source/GameOverGameState.cpp \
-    source/GameOverGameState.h \
+    source/GameOver.cpp \
+    source/GameOver.h \
     source/GameState.h \
     source/main.cpp \
     source/Player.cpp \
     source/Player.h \
-    source/PlayGameState.cpp \
-    source/PlayGameState.h \
+    source/Session.cpp \
+    source/Session.h \
     source/Vector2i.cpp \
     source/Vector2i.h \
+    source/Menu.cpp \
+    source/Menu.h \
     source/World.cpp \
     source/World.h
 

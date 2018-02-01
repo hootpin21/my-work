@@ -1,5 +1,5 @@
-#ifndef PLATFORMER_PLAYGAMESTATE_H
-#define PLATFORMER_PLAYGAMESTATE_H
+#ifndef PLATFORMER_PLAY_GAME_STATE_H
+#define PLATFORMER_PLAY_GAME_STATE_H
 
 #include "Player.h"
 #include "World.h"
@@ -7,20 +7,20 @@
 
 namespace platformer {
 
-    class PlayGameState : public GameState {
+    class Session : public GameState {
     private:
         static const int TICK_RATE = 200;
         static const int HALF_SCREEN = 2; // Used for relational rendering to player.
 
         int score = 0;
         Player *player = new Player();
-        World *world = createWorld1();
+        World *world;
         Game *game;
         bool displayCoins = false;
     public:
-        explicit PlayGameState(Game *game);
+        explicit Session(Game *game, World *world);
 
-        ~PlayGameState() override;
+        ~Session() override;
 
         void onButtonAPress() override;
 
@@ -39,4 +39,4 @@ namespace platformer {
 
 }
 
-#endif //PLATFORMER_PLAYGAMESTATE_H
+#endif //PLATFORMER_PLAY_GAME_STATE_H

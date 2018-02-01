@@ -9,8 +9,8 @@ namespace platformer {
 
     enum BlockType : char {
         AIR = '-',
-        FOREGROUND = '+',
-        BACKGROUND = '=',
+        SOLID = '+',
+        FLAG = '=',
         COIN = '.'
     };
 
@@ -43,7 +43,9 @@ namespace platformer {
         void setBlock(Vector2i location, BlockType type);
     };
 
-    World *createWorld1();
+    static const int WORLD_COUNT = 5;
+
+    World *createWorld(int id);
 }
 
 #endif //PLATFORMER_WORLD_H

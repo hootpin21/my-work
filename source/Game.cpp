@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include "Game.h"
-#include "PlayGameState.h"
+#include "Menu.h"
 
 namespace platformer {
 
@@ -22,7 +22,7 @@ namespace platformer {
         microBit->messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_BUTTON_EVT_CLICK, onButtonBPress);
 
         // Now enter the game loop.
-        state = new PlayGameState(this);
+        state = new Menu(this);
 
         while (state != nullptr) {
             state->run();
