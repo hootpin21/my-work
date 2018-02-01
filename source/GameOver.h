@@ -11,9 +11,10 @@ namespace platformer {
         static const int GAME_OVER_FLASHES = 5;
 
         Game *game;
+        int worldId;
         int gameOverTicks = 0;
     public:
-        explicit GameOver(Game *game);
+        GameOver(Game *game, int worldId);
 
         void onButtonAPress() override;
 

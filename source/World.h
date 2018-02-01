@@ -16,15 +16,18 @@ namespace platformer {
 
     class World {
     private:
+        const int id;
         const int minX = 0;
         const int minY = 0;
         const int maxX;
         const int maxY;
         std::vector<std::string*> map;
     public:
-        World(int maxX, int maxY, std::vector<std::string*> &map);
+        World(int id, int maxX, int maxY, std::vector<std::string*> &map);
 
         virtual ~World();
+
+        int getId() const;
 
         int getMinX() const;
 
@@ -35,10 +38,6 @@ namespace platformer {
         int getMaxY() const;
 
         std::vector<std::string*> &getMap();
-
-        Vector2i getRelativeLocation(Vector2i location, int offsetX, int offsetY) const;
-
-        BlockType getRelativeBlock(Vector2i location, int offsetX, int offsetY) const;
 
         BlockType getBlock(Vector2i location) const;
 

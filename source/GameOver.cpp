@@ -4,7 +4,7 @@
 
 namespace platformer {
 
-    GameOver::GameOver(Game *game) : game(game) {}
+    GameOver::GameOver(Game *game, int worldId) : game(game), worldId(worldId) {}
 
     void GameOver::onButtonAPress() {
         game->getMicroBit()->display.stopAnimation();
@@ -33,7 +33,7 @@ namespace platformer {
         gameOverTicks++;
 
         if (gameOverTicks >= GAME_OVER_FLASHES) {
-            auto *nextState = new Session(game, createWorld(0));
+            auto *nextState = new Session(game, createWorld(worldId));
             game->setState(nextState);
         }
     }

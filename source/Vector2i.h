@@ -12,21 +12,25 @@ namespace platformer {
 
         Vector2i(int x, int y);
 
-        void set(int x, int y);
+        Vector2i &set(int x, int y);
 
-        void add(int x, int y);
+        Vector2i &add(int x, int y);
 
-        void addX(int x);
+        Vector2i &addX(int x);
 
-        void addY(int y);
+        Vector2i &addY(int y);
 
         int getX() const;
 
-        void setX(int x);
+        Vector2i &setX(int x);
 
         int getY() const;
 
-        void setY(int y);
+        Vector2i &setY(int y);
+
+        Vector2i clone();
+
+        Vector2i getRelative(int offsetX, int offsetY);
     };
 
 }

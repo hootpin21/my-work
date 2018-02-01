@@ -2,6 +2,7 @@
 #define PLATFORMER_PLAYER_H
 
 #include "Vector2i.h"
+#include "World.h"
 
 namespace platformer {
 
@@ -14,17 +15,11 @@ namespace platformer {
     public:
         virtual ~Player();
 
-        bool isOnGround();
-
         void jump();
 
-        Vector2i *getLocation() const;
+        Vector2i &getLocation() const;
 
-        void setLocation(Vector2i *location);
-
-        Vector2i *getVelocity() const;
-
-        void setVelocity(Vector2i *velocity);
+        Vector2i &getVelocity() const;
     };
 
 }
