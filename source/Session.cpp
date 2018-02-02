@@ -149,7 +149,7 @@ namespace platformer {
             case AIR:
                 break;
             case SOLID:
-                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4 - y), 8);
+                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4 - y), 16);
                 break;
             case FLAG:
                 game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4 - y), 48);
