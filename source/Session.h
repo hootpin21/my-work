@@ -13,6 +13,8 @@ namespace platformer {
         static const int HALF_SCREEN = 2; // Used for relational rendering to player.
 
         int score = 0;
+        int partnerScore = -1;
+        bool partnerComplete = false;
         Player *player = new Player();
         World *world;
         Game *game;
@@ -26,6 +28,10 @@ namespace platformer {
 
         void onButtonBPress() override;
 
+        void onButtonABPress() override;
+
+        void onMessage(ByteBuf &in) override;
+
         void jump();
 
         void run() override;
@@ -35,6 +41,10 @@ namespace platformer {
         void render() const;
 
         void renderBlock(int offsetX, int offsetY, int x, int y) const;
+
+        void handleCompletion() const;
+
+        void handleDeath() const;
     };
 
 }

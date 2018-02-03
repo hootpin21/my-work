@@ -2,6 +2,10 @@
 MICROBIT_PATH = /run/media/billy/MICROBIT
 
 SOURCE_FILES += \
+    source/ByteBuf.cpp \
+    source/ByteBuf.h \
+    source/Connect.cpp \
+    source/Connect.h \
     source/Game.cpp \
     source/Game.h \
     source/GameOver.cpp \

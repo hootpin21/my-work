@@ -20,6 +20,10 @@ namespace platformer {
 
         void onButtonBPress() override;
 
+        void onButtonABPress() override;
+
+        void onMessage(ByteBuf &in) override;
+
         void run() override;
 
         void tick();

@@ -1,6 +1,7 @@
 {
   "build": {
     "target": "bbc-microbit-classic-gcc,*",
-    "targetSetExplicitly": true
+    "targetSetExplicitly": true,
+    "bluetooth": false
   }
 }

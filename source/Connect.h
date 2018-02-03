@@ -1,18 +1,17 @@
-#ifndef PLATFORMER_WIN_GAME_STATE_H
-#define PLATFORMER_WIN_GAME_STATE_H
+#ifndef PLATFORMER_CONNECT_H
+#define PLATFORMER_CONNECT_H
 
 #include "GameState.h"
 #include "Game.h"
 
 namespace platformer {
-    class Menu : public GameState {
+    class Connect : public GameState {
     private:
-        static const int TICK_RATE = 450;
+        static const int TICK_RATE = 500;
 
         Game *game;
-        int selectedWorld = 1;
     public:
-        explicit Menu(Game *game);
+        explicit Connect(Game *game);
 
         void onButtonAPress() override;
 
@@ -24,10 +23,8 @@ namespace platformer {
 
         void run() override;
 
-        void tick();
-
-        void render() const;
+        void stop();
     };
 }
 
-#endif //PLATFORMER_WIN_GAME_STATE_H
+#endif //PLATFORMER_CONNECT_H

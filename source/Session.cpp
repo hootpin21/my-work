@@ -12,6 +12,12 @@ namespace platformer {
     }
 
     void Session::onButtonAPress() {
+        // Do nothing if currently in multiplayer.
+        if (game->isMultiplayer()) {
+            return;
+        }
+
+        // Go back to the main menu.
         game->getMicroBit()->display.stopAnimation();
         auto *nextState = new Menu(game);
         game->setState(nextState);
@@ -19,6 +25,23 @@ namespace platformer {
 
     void Session::onButtonBPress() {
         jump();
+    }
+
+    void Session::onButtonABPress() {
+    }
+
+    void Session::onMessage(ByteBuf &in) {
+        PacketType packetType = in.readPacketType();
+
+        switch (packetType) {
+            case PacketType::WORLD_COMPLETE: {
+                partnerScore = in.readInt();
+                return;
+            }
+            default: {
+                return;
+            }
+        }
     }
 
     void Session::jump() {
@@ -52,11 +75,7 @@ namespace platformer {
         BlockType below = world->getBlock(location.getRelative(0, -1));
 
         if (center == FLAG) {
-            game->getMicroBit()->display.scroll("WINNER! SCORE:", 80);
-            game->getMicroBit()->display.scroll(score, 80);
-
-            auto *nextState = new Menu(game);
-            game->setState(nextState);
+            handleCompletion();
             return;
         }
 
@@ -82,8 +101,7 @@ namespace platformer {
                 location.addY(-1);
 
                 if (location.getY() < 0) {
-                    auto *nextState = new GameOver(game, world->getId());
-                    game->setState(nextState);
+                    handleDeath();
                     return;
                 }
             }
@@ -108,6 +126,61 @@ namespace platformer {
         }
 
         displayCoins = !displayCoins;
+    }
+
+    void Session::handleCompletion() const {
+        if (game->isMultiplayer()) {
+            // Message the partner that we have complete the level.
+            ByteBuf out = game->createPacket();
+            out.writePacketType(PacketType::WORLD_COMPLETE);
+            out.writeInt(score);
+            game->sendPacket(out);
+
+            // Wait until either the partner dies or completes the level.
+            while (!partnerComplete) {
+                game->getMicroBit()->display.scroll("WAITING", 80);
+                game->getMicroBit()->sleep(TICK_RATE);
+            }
+
+            // Display the status message and score.
+            if (partnerScore < score) {
+                game->getMicroBit()->display.scroll("WINNER! SCORE:", 80);
+            } else if (partnerScore > score) {
+                game->getMicroBit()->display.scroll("LOOSER! SCORE:", 80);
+            } else {
+                game->getMicroBit()->display.scroll("DRAW! SCORE:", 80);
+            }
+        } else {
+            game->getMicroBit()->display.scroll("WINNER! SCORE:", 80);
+        }
+
+        game->getMicroBit()->display.scroll(score, 80);
+
+        // Go back to the main menu.
+        auto *nextState = new Menu(game);
+        game->setState(nextState);
+    }
+
+    void Session::handleDeath() const {
+        if (!partnerComplete) {
+            // Temporarily switch to game over screen.
+            auto *nextState = new GameOver(game, world->getId());
+            game->setState(nextState);
+            return;
+        }
+
+        // Create and send world complete packet, as died after partner is complete.
+        ByteBuf out = game->createPacket();
+        out.writePacketType(PacketType::WORLD_COMPLETE);
+        out.writeInt(-1); // Player did not complete course, thus is given a negative score.
+        game->sendPacket(out);
+
+        // Show that we have lost the game.
+        game->getMicroBit()->display.scroll("LOOSER!", 80);
+
+        // Go back to the main menu.
+        auto *nextState = new Menu(game);
+        game->setState(nextState);
     }
 
     void Session::render() const {
