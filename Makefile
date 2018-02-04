@@ -1,6 +1,9 @@
 # Edit this line to where your micro:bit device is mounted:
 MICROBIT_PATH = /run/media/billy/MICROBIT
 
+# Uncomment the line below if you are using the supplied Ubuntu VM.
+#MICROBIT_PATH = /media/student/MICROBIT
+
 SOURCE_FILES += \
     source/ByteBuf.cpp \
     source/ByteBuf.h \
