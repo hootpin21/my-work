@@ -1,17 +1,17 @@
-#include "Session.h"
-#include "GameOver.h"
-#include "Menu.h"
+#include "PlayGameState.h"
+#include "DeathGameState.h"
+#include "MenuGameState.h"
 
 namespace platformer {
 
-    Session::Session(Game *game, World *world) : game(game), world(world) {}
+    PlayGameState::PlayGameState(Game *game, World *world) : game(game), world(world) {}
 
-    Session::~Session() {
+    PlayGameState::~PlayGameState() {
         delete player;
         delete world;
     }
 
-    void Session::onButtonAPress() {
+    void PlayGameState::onButtonAPress() {
         // Do nothing if currently in multiplayer.
         if (game->isMultiplayer()) {
             return;
@@ -19,18 +19,18 @@ namespace platformer {
 
         // Go back to the main menu.
         game->getMicroBit()->display.stopAnimation();
-        auto *nextState = new Menu(game);
+        auto *nextState = new MenuGameState(game);
         game->setState(nextState);
     }
 
-    void Session::onButtonBPress() {
+    void PlayGameState::onButtonBPress() {
         jump();
     }
 
-    void Session::onButtonABPress() {
+    void PlayGameState::onButtonABPress() {
     }
 
-    void Session::onMessage(ByteBuf &in) {
+    void PlayGameState::onMessage(ByteBuf &in) {
         PacketType packetType = in.readPacketType();
 
         switch (packetType) {
@@ -44,14 +44,14 @@ namespace platformer {
         }
     }
 
-    void Session::jump() {
+    void PlayGameState::jump() {
         BlockType below = world->getBlock(player->getLocation().clone().addY(-1));
         if (below == SOLID) {
             player->jump();
         }
     }
 
-    void Session::run() {
+    void PlayGameState::run() {
         score = 0;
         player->getLocation().set(1, 1);
 
@@ -66,7 +66,7 @@ namespace platformer {
         delete this;
     }
 
-    void Session::tick() {
+    void PlayGameState::tick() {
         Vector2i &location = player->getLocation();
         Vector2i &velocity = player->getVelocity();
 
@@ -128,7 +128,7 @@ namespace platformer {
         displayCoins = !displayCoins;
     }
 
-    void Session::handleCompletion() const {
+    void PlayGameState::handleCompletion() const {
         if (game->isMultiplayer()) {
             // Message the partner that we have complete the level.
             ByteBuf out = game->createPacket();
@@ -157,14 +157,14 @@ namespace platformer {
         game->getMicroBit()->display.scroll(score, 80);
 
         // Go back to the main menu.
-        auto *nextState = new Menu(game);
+        auto *nextState = new MenuGameState(game);
         game->setState(nextState);
     }
 
-    void Session::handleDeath() const {
+    void PlayGameState::handleDeath() const {
         if (!partnerComplete) {
             // Temporarily switch to game over screen.
-            auto *nextState = new GameOver(game, world->getId());
+            auto *nextState = new DeathGameState(game, world->getId());
             game->setState(nextState);
             return;
         }
@@ -179,30 +179,30 @@ namespace platformer {
         game->getMicroBit()->display.scroll("LOOSER!", 80);
 
         // Go back to the main menu.
-        auto *nextState = new Menu(game);
+        auto *nextState = new MenuGameState(game);
         game->setState(nextState);
     }
 
-    void Session::render() const {
+    void PlayGameState::render() const {
         // Render the player.
         Vector2i location = player->getLocation();
-        int offsetX = HALF_SCREEN;
-        int offsetY = HALF_SCREEN;
+        int offsetX = SCREEN_CENTER;
+        int offsetY = SCREEN_CENTER;
 
-        if (location.getY() <= HALF_SCREEN) {
-            offsetY -= HALF_SCREEN - location.getY();
+        if (location.getY() <= SCREEN_CENTER) {
+            offsetY -= SCREEN_CENTER - location.getY();
         }
 
-        if (location.getY() >= (world->getMaxY() - HALF_SCREEN)) {
-            offsetY += HALF_SCREEN - ((world->getMaxY() - 1) - location.getY());
+        if (location.getY() >= (world->getMaxY() - SCREEN_CENTER)) {
+            offsetY += SCREEN_CENTER - ((world->getMaxY() - 1) - location.getY());
         }
 
-        if (location.getX() <= HALF_SCREEN) {
-            offsetX -= HALF_SCREEN - location.getX();
+        if (location.getX() <= SCREEN_CENTER) {
+            offsetX -= SCREEN_CENTER - location.getX();
         }
 
-        if (location.getX() >= (world->getMaxX() - HALF_SCREEN - 1)) {
-            offsetX += HALF_SCREEN - ((world->getMaxX() - 2) - location.getX());
+        if (location.getX() >= (world->getMaxX() - SCREEN_CENTER - 1)) {
+            offsetX += SCREEN_CENTER - ((world->getMaxX() - 2) - location.getX());
         }
 
         game->getScreen()->setPixelValue((uint16_t) offsetX, (uint16_t) (4 - offsetY), 255);
@@ -215,7 +215,7 @@ namespace platformer {
         }
     }
 
-    void Session::renderBlock(int offsetX, int offsetY, int x, int y) const {
+    void PlayGameState::renderBlock(int offsetX, int offsetY, int x, int y) const {
         BlockType blockType = world->getBlock(player->getLocation().clone().add(x - offsetX, y - offsetY));
 
         switch (blockType) {

@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include "Game.h"
-#include "Menu.h"
+#include "MenuGameState.h"
 
 namespace platformer {
 
@@ -87,7 +87,7 @@ namespace platformer {
                         game->setPartnerId(senderId);
 
                         // Switch to the menu game state.
-                        auto *nextState = new Menu(game);
+                        auto *nextState = new MenuGameState(game);
                         game->setState(nextState);
                         break;
                     }
@@ -126,6 +126,7 @@ namespace platformer {
     Game::~Game() {
         delete microBit;
         delete screen;
+        delete state;
     }
 
     void Game::run() {
@@ -136,7 +137,7 @@ namespace platformer {
         microBit->messageBus.listen(MICROBIT_ID_RADIO, MICROBIT_RADIO_EVT_DATAGRAM, onMessage);
 
         // State is now the main menu.
-        state = new Menu(this);
+        state = new MenuGameState(this);
 
         // Now enter the game loop.
         while (state != nullptr) {

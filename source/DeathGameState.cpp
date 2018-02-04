@@ -1,12 +1,12 @@
-#include "GameOver.h"
-#include "Session.h"
-#include "Menu.h"
+#include "DeathGameState.h"
+#include "PlayGameState.h"
+#include "MenuGameState.h"
 
 namespace platformer {
 
-    GameOver::GameOver(Game *game, int worldId) : game(game), worldId(worldId) {}
+    DeathGameState::DeathGameState(Game *game, int worldId) : game(game), worldId(worldId) {}
 
-    void GameOver::onButtonAPress() {
+    void DeathGameState::onButtonAPress() {
         // Do nothing if currently in multiplayer.
         if (game->isMultiplayer()) {
             return;
@@ -14,17 +14,17 @@ namespace platformer {
 
         // Go back to the main menu.
         game->getMicroBit()->display.stopAnimation();
-        auto *nextState = new Menu(game);
+        auto *nextState = new MenuGameState(game);
         game->setState(nextState);
     }
 
-    void GameOver::onButtonBPress() {
+    void DeathGameState::onButtonBPress() {
     }
 
-    void GameOver::onButtonABPress() {
+    void DeathGameState::onButtonABPress() {
     }
 
-    void GameOver::onMessage(ByteBuf &in) {
+    void DeathGameState::onMessage(ByteBuf &in) {
         PacketType packetType = in.readPacketType();
 
         switch (packetType) {
@@ -39,7 +39,7 @@ namespace platformer {
                 game->getMicroBit()->display.scroll("LOOSER!", 80);
 
                 // Go back to the main menu.
-                auto *nextState = new Menu(game);
+                auto *nextState = new MenuGameState(game);
                 game->setState(nextState);
                 return;
             }
@@ -49,8 +49,8 @@ namespace platformer {
         }
     }
 
-    void GameOver::run() {
-        gameOverTicks = 0;
+    void DeathGameState::run() {
+        counter = 0;
 
         while (game->getState() == this) {
             game->getScreen()->clear();
@@ -63,17 +63,17 @@ namespace platformer {
         delete this;
     }
 
-    void GameOver::tick() {
-        gameOverTicks++;
+    void DeathGameState::tick() {
+        counter++;
 
-        if (gameOverTicks >= GAME_OVER_FLASHES) {
-            auto *nextState = new Session(game, createWorld(worldId));
+        if (counter >= FLASH_COUNT) {
+            auto *nextState = new PlayGameState(game, createWorld(worldId));
             game->setState(nextState);
         }
     }
 
-    void GameOver::render() const {
-        if (gameOverTicks % 2 == 0) {
+    void DeathGameState::render() const {
+        if (counter % 2 == 0) {
             return;
         }
 

@@ -1,21 +1,21 @@
-#include "Menu.h"
-#include "Session.h"
-#include "Connect.h"
+#include "MenuGameState.h"
+#include "PlayGameState.h"
+#include "ConnectGameState.h"
 
 namespace platformer {
 
-    Menu::Menu(Game *game) : game(game) {}
+    MenuGameState::MenuGameState(Game *game) : game(game) {}
 
-    void Menu::onButtonAPress() {
+    void MenuGameState::onButtonAPress() {
         game->getMicroBit()->display.stopAnimation();
     }
 
-    void Menu::onButtonBPress() {
+    void MenuGameState::onButtonBPress() {
         // Stop all current screen animations.
         game->getMicroBit()->display.stopAnimation();
 
         // Update the next state to a game session in the currently selected world.
-        auto *nextState = new Session(game, createWorld(selectedWorld));
+        auto *nextState = new PlayGameState(game, createWorld(selectedWorld));
         game->setState(nextState);
 
         // If in multiplayer, tell our partner to join the selected world.
@@ -27,14 +27,14 @@ namespace platformer {
         }
     }
 
-    void Menu::onButtonABPress() {
+    void MenuGameState::onButtonABPress() {
         // Toggle whether the game is in multiplayer mode.
         game->setMultiplayer(!game->isMultiplayer());
 
         if (game->isMultiplayer()) {
 
             // Switch to the connect game state.
-            auto *nextState = new Connect(game);
+            auto *nextState = new ConnectGameState(game);
             game->setState(nextState);
 
         } else if (game->isConnected()) {
@@ -52,7 +52,7 @@ namespace platformer {
         }
     }
 
-    void Menu::onMessage(ByteBuf &in) {
+    void MenuGameState::onMessage(ByteBuf &in) {
         PacketType packetType = in.readPacketType();
 
         switch (packetType) {
@@ -60,7 +60,7 @@ namespace platformer {
                 selectedWorld = in.readInt();
                 game->getMicroBit()->display.stopAnimation();
 
-                auto *nextState = new Session(game, createWorld(selectedWorld));
+                auto *nextState = new PlayGameState(game, createWorld(selectedWorld));
                 game->setState(nextState);
             }
             default: {
@@ -69,7 +69,7 @@ namespace platformer {
         }
     }
 
-    void Menu::run() {
+    void MenuGameState::run() {
         game->getMicroBit()->display.scroll("SELECT WORLD", 80);
 
         while (game->getState() == this) {
@@ -82,7 +82,7 @@ namespace platformer {
         delete this;
     }
 
-    void Menu::tick() {
+    void MenuGameState::tick() {
         int accelerometerX = game->getMicroBit()->accelerometer.getX();
 
         if (accelerometerX < -300) {
@@ -102,7 +102,7 @@ namespace platformer {
         }
     }
 
-    void Menu::render() const {
+    void MenuGameState::render() const {
         game->getMicroBit()->display.print(selectedWorld);
     }
 

@@ -1,26 +1,26 @@
-#include "Connect.h"
-#include "Menu.h"
+#include "ConnectGameState.h"
+#include "MenuGameState.h"
 
 namespace platformer {
 
-    Connect::Connect(Game *game) : game(game) {}
+    ConnectGameState::ConnectGameState(Game *game) : game(game) {}
 
-    void Connect::onButtonAPress() {
+    void ConnectGameState::onButtonAPress() {
         stop();
     }
 
-    void Connect::onButtonBPress() {
+    void ConnectGameState::onButtonBPress() {
         stop();
     }
 
-    void Connect::onButtonABPress() {
+    void ConnectGameState::onButtonABPress() {
         stop();
     }
 
-    void Connect::onMessage(ByteBuf &in) {
+    void ConnectGameState::onMessage(ByteBuf &in) {
     }
 
-    void Connect::run() {
+    void ConnectGameState::run() {
         while (game->getState() == this) {
             // Create and send the broadcast packet.
             ByteBuf out;
@@ -70,14 +70,14 @@ namespace platformer {
         delete this;
     }
 
-    void Connect::stop() {
+    void ConnectGameState::stop() {
         // Disable multiplayer.
         game->setMultiplayer(false);
         game->setConnected(false);
         game->setPartnerId(0);
 
         // Switch to the menu game state.
-        auto *nextState = new Menu(game);
+        auto *nextState = new MenuGameState(game);
         game->setState(nextState);
     };
 }
