@@ -19,7 +19,7 @@ namespace platformer {
     }
 
     int ByteBuf::read() {
-        if (offset > size()) {
+        if (offset >= size()) {
             return -1;
         }
         return buffer.at(offset++);

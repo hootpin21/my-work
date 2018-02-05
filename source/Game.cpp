@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "Game.h"
 #include "MenuGameState.h"
 
@@ -26,14 +25,12 @@ namespace platformer {
         }
 
         void onMessage(MicroBitEvent) {
-            // Do nothing if multiplayer is disabled.
-            if (!game->isMultiplayer()) {
-                return;
-            }
-
             // Create byte buffer for easy message reading.
             PacketBuffer received = game->getMicroBit()->radio.datagram.recv();
-            ByteBuf in((size_t) received.length(), (uint8_t &) *received.getBytes());
+            ByteBuf in;
+            for (int i = 0; i < received.length(); i++) {
+                in.write(received.getByte(i));
+            }
 
             // Read game ID, if message is not for this game then ignore.
             int gameId = in.readInt();
@@ -109,9 +106,13 @@ namespace platformer {
 
             // Disconnect if partner is found communicating with others.
             if (targetId != game->getId()) {
-                game->setConnected(false);
-                game->setPartnerId(0);
+                game->disconnect();
                 return;
+            }
+
+            // Wait until state has changed.
+            while (game->isChangingState()) {
+                game->getMicroBit()->sleep(1);
             }
 
             // Inform the current running state of this message.
@@ -152,6 +153,23 @@ namespace platformer {
         buf.writeInt(id);           // Sender ID
         buf.writeInt(partnerId);    // Target ID
         return buf;
+    }
+
+    void Game::disconnect() {
+        if (!game->isMultiplayer()) {
+            return;
+        }
+
+        // Send disconnect packet.
+        ByteBuf out = createPacket();
+        out.writePacketType(PacketType::DISCONNECT);
+        sendPacket(out);
+
+        // Update game state, disabling connection and the radio.
+        game->getMicroBit()->radio.disable();
+        game->setMultiplayer(false);
+        game->setConnected(false);
+        game->setPartnerId(0);
     }
 
     void Game::sendPacket(ByteBuf packet) {

@@ -17,10 +17,14 @@ namespace platformer {
         stop();
     }
 
-    void ConnectGameState::onMessage(ByteBuf &in) {
+    void ConnectGameState::onMessage(ByteBuf &) {
+        // No packets should be received in this state.
     }
 
     void ConnectGameState::run() {
+        game->setMultiplayer(true);
+        game->getMicroBit()->radio.enable();
+
         while (game->getState() == this) {
             // Create and send the broadcast packet.
             ByteBuf out;
@@ -48,11 +52,11 @@ namespace platformer {
             // Create a happy face.
             face->setPixelValue(1, 1, 255);
             face->setPixelValue(3, 1, 255);
-            face->setPixelValue(0, 4, 255);
-            face->setPixelValue(1, 3, 255);
-            face->setPixelValue(2, 3, 255);
-            face->setPixelValue(3, 3, 255);
-            face->setPixelValue(4, 4, 255);
+            face->setPixelValue(0, 3, 255);
+            face->setPixelValue(1, 4, 255);
+            face->setPixelValue(2, 4, 255);
+            face->setPixelValue(3, 4, 255);
+            face->setPixelValue(4, 3, 255);
         } else {
             // Create a sad face.
             face->setPixelValue(1, 1, 255);
@@ -72,9 +76,7 @@ namespace platformer {
 
     void ConnectGameState::stop() {
         // Disable multiplayer.
-        game->setMultiplayer(false);
-        game->setConnected(false);
-        game->setPartnerId(0);
+        game->disconnect();
 
         // Switch to the menu game state.
         auto *nextState = new MenuGameState(game);

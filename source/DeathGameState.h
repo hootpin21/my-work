@@ -58,6 +58,11 @@ namespace platformer {
         void onMessage(ByteBuf &in) override;
 
         /**
+         * Quits back to the main menu.
+         */
+        void quitToMenu() const;
+
+        /**
          * {@inheritDoc}
          */
         void run() override;

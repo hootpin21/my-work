@@ -31,6 +31,9 @@ namespace platformer {
         // Toggle whether the game is in multiplayer mode.
         game->setMultiplayer(!game->isMultiplayer());
 
+        // Stop all active screen animation.
+        game->getMicroBit()->display.stopAnimation();
+
         if (game->isMultiplayer()) {
 
             // Switch to the connect game state.
@@ -40,14 +43,7 @@ namespace platformer {
         } else if (game->isConnected()) {
 
             // Disconnect from partner.
-            ByteBuf out = game->createPacket();
-            out.writeInt(DISCONNECT);
-            game->sendPacket(out);
-            game->setConnected(false);
-            game->setPartnerId(0);
-
-            // Let the user now they've successfully disconnected.
-            game->getMicroBit()->display.scroll("DISCONNECTED", 80);
+            game->disconnect();
 
         }
     }
@@ -56,12 +52,17 @@ namespace platformer {
         PacketType packetType = in.readPacketType();
 
         switch (packetType) {
-            case SELECT_WORLD: {
+            case PacketType::SELECT_WORLD: {
                 selectedWorld = in.readInt();
                 game->getMicroBit()->display.stopAnimation();
 
                 auto *nextState = new PlayGameState(game, createWorld(selectedWorld));
                 game->setState(nextState);
+                return;
+            }
+            case PacketType::DISCONNECT: {
+                game->disconnect();
+                return;
             }
             default: {
                 return;

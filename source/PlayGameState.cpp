@@ -12,15 +12,17 @@ namespace platformer {
     }
 
     void PlayGameState::onButtonAPress() {
-        // Do nothing if currently in multiplayer.
+        partnerComplete = true;
+
+        // Send quit world packet when in multiplayer.
         if (game->isMultiplayer()) {
-            return;
+            ByteBuf out = game->createPacket();
+            out.writePacketType(PacketType::QUIT_WORLD);
+            game->sendPacket(out);
         }
 
         // Go back to the main menu.
-        game->getMicroBit()->display.stopAnimation();
-        auto *nextState = new MenuGameState(game);
-        game->setState(nextState);
+        quitToMenu();
     }
 
     void PlayGameState::onButtonBPress() {
@@ -28,6 +30,9 @@ namespace platformer {
     }
 
     void PlayGameState::onButtonABPress() {
+        partnerComplete = true;
+        game->disconnect();
+        quitToMenu();
     }
 
     void PlayGameState::onMessage(ByteBuf &in) {
@@ -35,13 +40,34 @@ namespace platformer {
 
         switch (packetType) {
             case PacketType::WORLD_COMPLETE: {
+                if (complete) {
+                    game->getMicroBit()->display.stopAnimation();
+                }
                 partnerScore = in.readInt();
+                partnerComplete = true;
+                return;
+            }
+            case PacketType::QUIT_WORLD: {
+                partnerComplete = true;
+                quitToMenu();
+                return;
+            }
+            case PacketType::DISCONNECT: {
+                partnerComplete = true;
+                game->disconnect();
+                quitToMenu();
                 return;
             }
             default: {
                 return;
             }
         }
+    }
+
+    void PlayGameState::quitToMenu() const {
+        game->getMicroBit()->display.stopAnimation();
+        auto *nextState = new MenuGameState(game);
+        game->setState(nextState);
     }
 
     void PlayGameState::jump() {
@@ -128,7 +154,9 @@ namespace platformer {
         displayCoins = !displayCoins;
     }
 
-    void PlayGameState::handleCompletion() const {
+    void PlayGameState::handleCompletion() {
+        complete = true;
+
         if (game->isMultiplayer()) {
             // Message the partner that we have complete the level.
             ByteBuf out = game->createPacket();
@@ -155,10 +183,7 @@ namespace platformer {
         }
 
         game->getMicroBit()->display.scroll(score, 80);
-
-        // Go back to the main menu.
-        auto *nextState = new MenuGameState(game);
-        game->setState(nextState);
+        quitToMenu();
     }
 
     void PlayGameState::handleDeath() const {
@@ -176,11 +201,10 @@ namespace platformer {
         game->sendPacket(out);
 
         // Show that we have lost the game.
-        game->getMicroBit()->display.scroll("LOOSER!", 80);
+        game->getMicroBit()->display.scroll("LOOSER! SCORE: 0", 80);
 
-        // Go back to the main menu.
-        auto *nextState = new MenuGameState(game);
-        game->setState(nextState);
+        // Update next state to the main menu.
+        quitToMenu();
     }
 
     void PlayGameState::render() const {
@@ -216,7 +240,7 @@ namespace platformer {
     }
 
     void PlayGameState::renderBlock(int offsetX, int offsetY, int x, int y) const {
-        BlockType blockType = world->getBlock(player->getLocation().clone().add(x - offsetX, y - offsetY));
+        BlockType blockType = world->getBlock(player->getLocation().getRelative(x - offsetX, y - offsetY));
 
         switch (blockType) {
             case AIR:

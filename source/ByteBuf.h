@@ -14,6 +14,7 @@ namespace platformer {
         PARTNER_REQUEST,
         SELECT_WORLD,
         WORLD_COMPLETE,
+        QUIT_WORLD,
         DISCONNECT,
         INVALID // Always keep INVALID at the end, its used for indexing.
     };

@@ -8,7 +8,7 @@
 
 namespace platformer {
 
-    static const int GAME_ID = 0x1337;
+    static const int GAME_ID = 7;
     static const int SCREEN_SIZE = 5;
 
     /**
@@ -68,6 +68,11 @@ namespace platformer {
          * @param buf the {@link ByteBuf} packet.
          */
         void sendPacket(ByteBuf buf);
+
+        /**
+         * Disconnects from a connected and disables micro:bit radio.
+         */
+        void disconnect();
 
         /**
          * Gets the {@link MicroBit} instance.

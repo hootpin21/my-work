@@ -19,9 +19,19 @@ namespace platformer {
     }
 
     void DeathGameState::onButtonBPress() {
+        // Send quit world packet when in multiplayer.
+        if (game->isMultiplayer()) {
+            ByteBuf out = game->createPacket();
+            out.writePacketType(PacketType::QUIT_WORLD);
+            game->sendPacket(out);
+        }
+
+        quitToMenu();
     }
 
     void DeathGameState::onButtonABPress() {
+        game->disconnect();
+        quitToMenu();
     }
 
     void DeathGameState::onMessage(ByteBuf &in) {
@@ -35,18 +45,32 @@ namespace platformer {
                 out.writeInt(-1); // Player did not complete course, thus is given a negative score.
                 game->sendPacket(out);
 
-                // Show that we have lost the game.
-                game->getMicroBit()->display.scroll("LOOSER!", 80);
-
                 // Go back to the main menu.
-                auto *nextState = new MenuGameState(game);
-                game->setState(nextState);
+                quitToMenu();
+
+                // Show that we have lost the game.
+                game->getMicroBit()->display.scrollAsync("LOOSER! SCORE: 0", 80);
+                return;
+            }
+            case PacketType::QUIT_WORLD: {
+                quitToMenu();
+                return;
+            }
+            case PacketType::DISCONNECT: {
+                game->disconnect();
+                quitToMenu();
                 return;
             }
             default: {
                 return;
             }
         }
+    }
+
+    void DeathGameState::quitToMenu() const {
+        game->getMicroBit()->display.stopAnimation();
+        auto *nextState = new MenuGameState(game);
+        game->setState(nextState);
     }
 
     void DeathGameState::run() {

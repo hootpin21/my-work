@@ -24,6 +24,9 @@ namespace platformer {
         // Our current score.
         int score = 0;
 
+        // Whether we have completed the world.
+        bool complete = false;
+
         // The score of our opponent.
         int partnerScore = -1;
 
@@ -79,6 +82,11 @@ namespace platformer {
         void onMessage(ByteBuf &in) override;
 
         /**
+         * Quits back to the main menu.
+         */
+        void quitToMenu() const;
+
+        /**
          * Called whenever button B is pressed, makes the player jump.
          */
         void jump();
@@ -98,7 +106,7 @@ namespace platformer {
          * to complete when in multiplayer. Prints out the final score and
          * whether they were the winner of this game.
          */
-        void handleCompletion() const;
+        void handleCompletion();
 
         /**
          * Handles when the player has fallen off the map and died. Either
