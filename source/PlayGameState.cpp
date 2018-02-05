@@ -141,7 +141,7 @@ namespace platformer {
             location.addX(-1);
         }
 
-        if (accelerometerX > 300 && location.getX() < (world->getMaxX() - 2) && right != SOLID) {
+        if (accelerometerX > 300 && location.getX() < (world->getMaxX() - 1) && right != SOLID) {
             location.addX(1);
         }
 
@@ -225,11 +225,11 @@ namespace platformer {
             offsetX -= SCREEN_CENTER - location.getX();
         }
 
-        if (location.getX() >= (world->getMaxX() - SCREEN_CENTER - 1)) {
-            offsetX += SCREEN_CENTER - ((world->getMaxX() - 2) - location.getX());
+        if (location.getX() >= (world->getMaxX() - SCREEN_CENTER)) {
+            offsetX += SCREEN_CENTER - ((world->getMaxX() - 1) - location.getX());
         }
 
-        game->getScreen()->setPixelValue((uint16_t) offsetX, (uint16_t) (4 - offsetY), 255);
+        game->getScreen()->setPixelValue((uint16_t) offsetX, (uint16_t) ((SCREEN_SIZE - 1) - offsetY), 255);
 
         // Render the map.
         for (int x = 0; x < SCREEN_SIZE; x++) {
@@ -246,14 +246,14 @@ namespace platformer {
             case AIR:
                 break;
             case SOLID:
-                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4 - y), 16);
+                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) ((SCREEN_SIZE - 1) - y), 16);
                 break;
             case FLAG:
-                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4 - y), 48);
+                game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) ((SCREEN_SIZE - 1) - y), 48);
                 break;
             case COIN:
                 if (displayCoins) {
-                    game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) (4 - y), 96);
+                    game->getScreen()->setPixelValue((uint16_t) x, (uint16_t) ((SCREEN_SIZE - 1) - y), 96);
                 }
                 break;
         }
