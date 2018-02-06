@@ -64,10 +64,13 @@ namespace platformer {
         void onMessage(MicroBitEvent);
 
         /**
+         * Attempts to create a connection, given the following connection
+         * initiation arguments. Should only be called when not already
+         * connected to another micro:bit, and we are being requested to do so.
          *
-         * @param packetType
-         * @param senderId
-         * @param targetId
+         * @param packetType the packet type we were sent.
+         * @param senderId the sender ID.
+         * @param targetId the target ID.
          */
         void setupConnection(PacketType packetType, uint32_t senderId, uint32_t targetId);
 
