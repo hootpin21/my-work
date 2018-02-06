@@ -71,7 +71,7 @@ namespace platformer {
     }
 
     void MenuGameState::run() {
-        game->getMicroBit()->display.scroll("SELECT WORLD", 80);
+        game->getMicroBit()->display.scroll("SELECT WORLD", SCROLL_SPEED);
 
         while (game->getState() == this) {
             game->getScreen()->clear();

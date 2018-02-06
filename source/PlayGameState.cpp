@@ -215,23 +215,23 @@ namespace platformer {
 
             // Wait until either the partner dies or completes the level.
             while (!partnerComplete) {
-                game->getMicroBit()->display.scroll("WAITING", 80);
+                game->getMicroBit()->display.scroll("WAITING", SCROLL_SPEED);
                 game->getMicroBit()->sleep(TICK_RATE);
             }
 
             // Display the status message and score.
             if (partnerScore < score) {
-                game->getMicroBit()->display.scroll("WINNER! SCORE:", 80);
+                game->getMicroBit()->display.scroll("WINNER! SCORE:", SCROLL_SPEED);
             } else if (partnerScore > score) {
-                game->getMicroBit()->display.scroll("LOOSER! SCORE:", 80);
+                game->getMicroBit()->display.scroll("LOOSER! SCORE:", SCROLL_SPEED);
             } else {
-                game->getMicroBit()->display.scroll("DRAW! SCORE:", 80);
+                game->getMicroBit()->display.scroll("DRAW! SCORE:", SCROLL_SPEED);
             }
         } else {
-            game->getMicroBit()->display.scroll("WINNER! SCORE:", 80);
+            game->getMicroBit()->display.scroll("WINNER! SCORE:", SCROLL_SPEED);
         }
 
-        game->getMicroBit()->display.scroll(score, 80);
+        game->getMicroBit()->display.scroll(score, SCROLL_SPEED);
         quitToMenu();
     }
 
@@ -250,7 +250,7 @@ namespace platformer {
         game->sendPacket(out);
 
         // Show that we have lost the game.
-        game->getMicroBit()->display.scroll("LOOSER! SCORE: 0", 80);
+        game->getMicroBit()->display.scroll("LOOSER! SCORE: 0", SCROLL_SPEED);
 
         // Update next state to the main menu.
         quitToMenu();

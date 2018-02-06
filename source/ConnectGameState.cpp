@@ -36,7 +36,7 @@ namespace platformer {
             game->sendPacket(out);
 
             // Display "CONNECTING" animation.
-            game->getMicroBit()->display.scrollAsync("CONNECTING");
+            game->getMicroBit()->display.scrollAsync("CONNECTING", SCROLL_SPEED);
 
             // Sleep until next tick should occur.
             game->getMicroBit()->sleep(TICK_RATE);

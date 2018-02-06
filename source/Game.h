@@ -13,6 +13,9 @@ namespace platformer {
     // The LED count for both X and Y are the same.
     static const int SCREEN_SIZE = 5;
 
+    // Global for all game text scroll speed.
+    static const int SCROLL_SPEED = 80;
+
     /**
      * The main game manager. Holds and manages the current game state and
      * provides quick access to device information.

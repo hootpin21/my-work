@@ -49,7 +49,7 @@ namespace platformer {
                 quitToMenu();
 
                 // Show that we have lost the game.
-                game->getMicroBit()->display.scrollAsync("LOOSER! SCORE: 0", 80);
+                game->getMicroBit()->display.scrollAsync("LOOSER! SCORE: 0", SCROLL_SPEED);
                 return;
             }
             case PacketType::QUIT_WORLD: {
