@@ -93,64 +93,113 @@ namespace platformer {
     }
 
     void PlayGameState::tick() {
+        //
+        // Player updates.
+        //
+
+        // Get players position and velocity.
         Vector2i &location = player->getLocation();
         Vector2i &velocity = player->getVelocity();
 
+        //
+        // Check for any current non-solid block collisions.
+        //
         BlockType center = world->getBlock(location);
-        BlockType above = world->getBlock(location.getRelative(0, 1));
-        BlockType below = world->getBlock(location.getRelative(0, -1));
 
+        // Game is complete if player is on a flag.
         if (center == FLAG) {
             handleCompletion();
             return;
         }
 
+        // Increase score if player is on a coin.
         if (center == COIN) {
             world->setBlock(location, AIR);
             score++;
         }
 
+        //
+        // Perform movements on the Y axis.
+        //
+        BlockType above = world->getBlock(location.getRelative(0, 1));
+        BlockType below = world->getBlock(location.getRelative(0, -1));
+
+        // Set velocity to zero if player is on the flag with no upwards velocity.
         if (above == SOLID && velocity.getY() > 0) {
             velocity.setY(0);
         }
 
+        // Decrement velocity if player is not standing on ground.
         if (below != SOLID) {
             velocity.addY(-1);
         }
 
         if (velocity.getY() > 0) {
+
+            // When velocity is positive ...
+            // ... increment the players' Y position.
             location.addY(1);
+
         } else if (velocity.getY() < 0) {
+
+            // When velocity is negative ...
             if (below == SOLID) {
+
+                // ... and currently standing on solid ground ...
+                // ... reset velocity to zero.
                 velocity.setY(0);
+
             } else {
+
+                // ... and not standing on solid ground ...
+                // ... decrement the players' Y position ...
                 location.addY(-1);
 
+                // ... if the Y position is below zero, kill the player.
                 if (location.getY() < 0) {
                     handleDeath();
                     return;
                 }
+
             }
         }
 
+        //
+        // Perform movements on the X axis.
+        //
         BlockType left = world->getBlock(location.getRelative(-1, 0));
         BlockType right = world->getBlock(location.getRelative(1, 0));
         int accelerometerX = game->getMicroBit()->accelerometer.getX();
 
+        // Decrement X if device is tilted left, the player is not at the end
+        // of the map, and the player will not collide with a solid block.
         if (accelerometerX < -300 && location.getX() > 0 && left != SOLID) {
             location.addX(-1);
         }
 
+        // Increment X if device is tilted right, the player is not at the end
+        // of the map, and the player will not collide with a solid block.
         if (accelerometerX > 300 && location.getX() < (world->getMaxX() - 1) && right != SOLID) {
             location.addX(1);
         }
 
         if (velocity.getX() > 0) {
+
+            // Increment players' X position if they have a positive X velocity.
             location.addX(1);
+
         } else if (velocity.getX() < 0) {
+
+            // Decrement players' X position if they have a negative X velocity.
             location.addX(-1);
+
         }
 
+        //
+        // World updates.
+        //
+
+        // Toggle whether coins should be displayed.
         displayCoins = !displayCoins;
     }
 
