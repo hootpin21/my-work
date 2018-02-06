@@ -7,12 +7,12 @@ namespace platformer {
         delete velocity;
     }
 
-    Vector2i &Player::getLocation() const {
-        return *location;
-    }
-
     void Player::jump() {
         velocity->addY(JUMP_HEIGHT);
+    }
+
+    Vector2i &Player::getLocation() const {
+        return *location;
     }
 
     Vector2i &Player::getVelocity() const {

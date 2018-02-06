@@ -1,14 +1,16 @@
 #ifndef PLATFORMER_GAME_H
 #define PLATFORMER_GAME_H
 
-#include <cstdint>
-#include <random>
 #include "MicroBit.h"
 #include "GameState.h"
 
 namespace platformer {
 
-    static const int GAME_ID = 7;
+    // The ID of this game, used for filtering nonsense packets.
+    static const int GAME_ID = 0x1337;
+
+    // Size of the micro:bit LED display.
+    // The LED count for both X and Y are the same.
     static const int SCREEN_SIZE = 5;
 
     /**
@@ -17,6 +19,10 @@ namespace platformer {
      */
     class Game {
     private:
+        // The device serial number, used to uniquely identify the device while
+        // communicating over the network.
+        const uint32_t id = microbit_serial_number();
+
         // The micro:bit instance, used for interacting with the hardware.
         MicroBit *microBit = new MicroBit();
 
@@ -35,8 +41,49 @@ namespace platformer {
         // Multiplayer settings.
         bool multiplayer = false;
         bool connected = false;
-        const int id = std::rand(); // NOLINT
-        int partnerId = -1;
+        uint32_t partnerId = 0;
+
+        /**
+         * Handles when button A is pressed.
+         */
+        void onButtonAPress(MicroBitEvent);
+
+        /**
+         * Handles when button B is pressed.
+         */
+        void onButtonBPress(MicroBitEvent);
+
+        /**
+         * Handles when both buttons A and B are pressed together.
+         */
+        void onButtonABPress(MicroBitEvent);
+
+        /**
+         * Handles when a radio packet has been received.
+         */
+        void onMessage(MicroBitEvent);
+
+        /**
+         *
+         * @param packetType
+         * @param senderId
+         * @param targetId
+         */
+        void setupConnection(PacketType packetType, uint32_t senderId, uint32_t targetId);
+
+        /**
+         * Sets whether we are connected to another device for multiplayer mode.
+         *
+         * @param connected {@code true} if we are connected.
+         */
+        void setConnected(bool connected);
+
+        /**
+         * Sets the currently connected partner ID.
+         *
+         * @param partnerId the partner ID.
+         */
+        void setPartnerId(uint32_t partnerId);
 
     public:
         /**
@@ -134,33 +181,19 @@ namespace platformer {
         bool isConnected() const;
 
         /**
-         * Sets whether we are connected to another device for multiplayer mode.
-         *
-         * @param connected {@code true} if we are connected.
-         */
-        void setConnected(bool connected);
-
-        /**
          * Gets the unique identifier for our device, useful for communicating
          * via the micro:bit radio service.
          *
          * @return this devices unique identifier.
          */
-        int getId() const;
+        uint32_t getId() const;
 
         /**
          * Gets the currently connect partner devices unique identifier.
          *
          * @return the partners ID.
          */
-        int getPartnerId() const;
-
-        /**
-         * Sets the currently connected partner ID.
-         *
-         * @param partnerId the partner ID.
-         */
-        void setPartnerId(int partnerId);
+        uint32_t getPartnerId() const;
     };
 
 }

@@ -1,8 +1,8 @@
 #ifndef PLATFORMER_BYTE_BUF_H
 #define PLATFORMER_BYTE_BUF_H
 
+#include <cstdint>
 #include <vector>
-#include <stdint-gcc.h>
 
 namespace platformer {
 
@@ -55,7 +55,7 @@ namespace platformer {
          *
          * @return the size in bytes.
          */
-        int size();
+        size_t size();
 
         /**
          * Gets the raw data held in this buffer.
@@ -107,6 +107,7 @@ namespace platformer {
          */
         void writePacketType(PacketType packetType);
     };
+
 }
 
 #endif //PLATFORMER_BYTE_BUF_H

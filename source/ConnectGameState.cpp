@@ -82,4 +82,5 @@ namespace platformer {
         auto *nextState = new MenuGameState(game);
         game->setState(nextState);
     };
+
 }

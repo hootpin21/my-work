@@ -15,24 +15,12 @@ namespace platformer {
         return id;
     }
 
-    int World::getMinX() const {
-        return minX;
-    }
-
-    int World::getMinY() const {
-        return minY;
-    }
-
     int World::getMaxX() const {
         return maxX;
     }
 
     int World::getMaxY() const {
         return maxY;
-    }
-
-    std::vector<std::string *> &World::getMap() {
-        return map;
     }
 
     BlockType World::getBlock(Vector2i location) const {
@@ -151,4 +139,5 @@ namespace platformer {
                 return createWorld1();
         }
     }
+
 }

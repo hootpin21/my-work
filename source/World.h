@@ -27,8 +27,6 @@ namespace platformer {
         const int id;
 
         // Map dimensions.
-        const int minX = 0;
-        const int minY = 0;
         const int maxX;
         const int maxY;
 
@@ -37,18 +35,18 @@ namespace platformer {
         // contiguous memory. Since memory fragments quickly on micro:bit
         // devices and we only have 16kb to play with, it makes sense to split
         // up our allocations.
-        std::vector<std::string*> map;
+        std::vector<std::string *> map;
 
     public:
         /**
          * Constructs a new {@link World}.
          *
-         * @param id the uniquie ID of this world type.
+         * @param id the unique ID of this world type.
          * @param maxX the maximum X coordinate.
          * @param maxY the maximum Y coordinate.
          * @param map the backing map of all block types and positions.
          */
-        World(int id, int maxX, int maxY, std::vector<std::string*> &map);
+        World(int id, int maxX, int maxY, std::vector<std::string *> &map);
 
         /**
          * Destructs this world, deleting all contents of the map.
@@ -63,20 +61,6 @@ namespace platformer {
         int getId() const;
 
         /**
-         * Gets the minimum X coordinate.
-         *
-         * @return the minimum X coordinate.
-         */
-        int getMinX() const;
-
-        /**
-         * Gets the minimum Y coordinate.
-         *
-         * @return the minimum Y coordinate.
-         */
-        int getMinY() const;
-
-        /**
          * Gets the maximum X coordinate.
          *
          * @return the maximum X coordinate.
@@ -89,8 +73,6 @@ namespace platformer {
          * @return the maximum Y coordinate.
          */
         int getMaxY() const;
-
-        std::vector<std::string*> &getMap();
 
         /**
          * Gets the block type, given a specific location.
@@ -120,6 +102,7 @@ namespace platformer {
      * @return the newly created world.
      */
     World *createWorld(int id);
+
 }
 
 #endif //PLATFORMER_WORLD_H

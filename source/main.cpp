@@ -1,22 +1,11 @@
 #include "Game.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#pragma ide diagnostic ignored "OCDFAInspection"
+int main() {
+    // Create and run the game.
+    auto game = new platformer::Game();
+    game->run();
 
-int main(int argc, char *argv[]) {
-    // Initialise the micro:bit runtime.
-    auto *game = new platformer::Game();
-    game->getMicroBit()->init();
-    game->getMicroBit()->display.setDisplayMode(DISPLAY_MODE_GREYSCALE);
-
-    // Continuously run the game.
-    while (true) {
-        game->run();
-    }
-
+    // Cleanup and exit.
     delete game;
     return EXIT_SUCCESS;
 }
-
-#pragma clang diagnostic pop

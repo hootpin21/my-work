@@ -10,8 +10,8 @@ namespace platformer {
 
     ByteBuf::~ByteBuf() = default;
 
-    int ByteBuf::size() {
-        return (int) buffer.size();
+    size_t ByteBuf::size() {
+        return buffer.size();
     }
 
     uint8_t *ByteBuf::data() {

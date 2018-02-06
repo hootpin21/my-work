@@ -1,9 +1,9 @@
 #ifndef PLATFORMER_PLAY_GAME_STATE_H
 #define PLATFORMER_PLAY_GAME_STATE_H
 
+#include "Game.h"
 #include "Player.h"
 #include "World.h"
-#include "Game.h"
 
 namespace platformer {
 
@@ -36,11 +36,11 @@ namespace platformer {
         // The player.
         Player *player = new Player();
 
-        // The world currently being played.
-        World *world;
-
         // The currently running game.
         Game *game;
+
+        // The world currently being played.
+        World *world;
 
         // Inverted once every tick to create coin flashing effect.
         bool displayCoins = false;

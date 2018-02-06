@@ -2,7 +2,6 @@
 #define PLATFORMER_PLAYER_H
 
 #include "Vector2i.h"
-#include "World.h"
 
 namespace platformer {
 

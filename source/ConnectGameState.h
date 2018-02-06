@@ -1,7 +1,6 @@
 #ifndef PLATFORMER_CONNECT_GAME_STATE_H
 #define PLATFORMER_CONNECT_GAME_STATE_H
 
-#include "GameState.h"
 #include "Game.h"
 
 namespace platformer {
