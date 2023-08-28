@@ -152,3 +152,29 @@ lives until one person completes the level. After one person completes
 the level, the remaining player only has one life. If they die, the
 first person to complete the level automatically wins. If both players
 complete the level, the player with the highest score wins.
+
+
+
+> Open this page at [https://hootpin21.github.io/my-work/](https://hootpin21.github.io/my-work/)
+
+## Use as Extension
+
+This repository can be added as an **extension** in MakeCode.
+
+* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
+* click on **New Project**
+* click on **Extensions** under the gearwheel menu
+* search for **https://github.com/hootpin21/my-work** and import
+
+## Edit this project
+
+To edit this repository in MakeCode.
+
+* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
+* click on **Import** then click on **Import URL**
+* paste **https://github.com/hootpin21/my-work** and click import
+
+#### Metadata (used for search, rendering)
+
+* for PXT/microbit
+<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
